@@ -28,42 +28,44 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.MainSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
-            this.файлыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.выделениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.командыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.leftPathInfo = new System.Windows.Forms.Label();
             this.leftDataView = new System.Windows.Forms.DataGridView();
+            this.leftImgColumn = new System.Windows.Forms.DataGridViewImageColumn();
+            this.leftNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.leftExtColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.leftSizeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.leftDateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.leftAttrColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.leftPathInfo = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.leftDiskSpaceInfo = new System.Windows.Forms.Label();
+            this.leftDiskDropDown = new System.Windows.Forms.ComboBox();
             this.rightDataView = new System.Windows.Forms.DataGridView();
+            this.rightImgColumn = new System.Windows.Forms.DataGridViewImageColumn();
+            this.rightNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.rightExtColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.rightSizeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.rightDateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.rightAttrColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.rightPathInfo = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.rightDiskSpaceInfo = new System.Windows.Forms.Label();
             this.rightDiskDropDown = new System.Windows.Forms.ComboBox();
-            this.leftDiskSpaceInfo = new System.Windows.Forms.Label();
-            this.leftDiskDropDown = new System.Windows.Forms.ComboBox();
-            this.ImgColumn = new System.Windows.Forms.DataGridViewImageColumn();
-            this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ExtColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.SizeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.AttrColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
+            this.файлыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.выделениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.командыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).BeginInit();
             this.MainSplitContainer.Panel1.SuspendLayout();
             this.MainSplitContainer.Panel2.SuspendLayout();
             this.MainSplitContainer.SuspendLayout();
-            this.mainMenuStrip.SuspendLayout();
-            this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.leftDataView)).BeginInit();
+            this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.rightDataView)).BeginInit();
             this.panel2.SuspendLayout();
+            this.mainMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainSplitContainer
@@ -88,45 +90,76 @@
             this.MainSplitContainer.SplitterDistance = 358;
             this.MainSplitContainer.TabIndex = 1;
             // 
-            // mainMenuStrip
+            // leftDataView
             // 
-            this.mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.файлыToolStripMenuItem,
-            this.выделениеToolStripMenuItem,
-            this.командыToolStripMenuItem});
-            this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
-            this.mainMenuStrip.Name = "mainMenuStrip";
-            this.mainMenuStrip.Size = new System.Drawing.Size(800, 24);
-            this.mainMenuStrip.TabIndex = 2;
-            this.mainMenuStrip.Text = "menuStrip1";
+            this.leftDataView.AllowUserToAddRows = false;
+            this.leftDataView.AllowUserToDeleteRows = false;
+            this.leftDataView.AllowUserToResizeRows = false;
+            this.leftDataView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.leftDataView.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.leftDataView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.leftDataView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
+            this.leftDataView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.leftDataView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.leftImgColumn,
+            this.leftNameColumn,
+            this.leftExtColumn,
+            this.leftSizeColumn,
+            this.leftDateColumn,
+            this.leftAttrColumn});
+            this.leftDataView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.leftDataView.Location = new System.Drawing.Point(0, 42);
+            this.leftDataView.MultiSelect = false;
+            this.leftDataView.Name = "leftDataView";
+            this.leftDataView.RowHeadersVisible = false;
+            this.leftDataView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.leftDataView.Size = new System.Drawing.Size(354, 380);
+            this.leftDataView.TabIndex = 3;
+            this.leftDataView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.leftDataView_CellDoubleClick);
             // 
-            // файлыToolStripMenuItem
+            // leftImgColumn
             // 
-            this.файлыToolStripMenuItem.Name = "файлыToolStripMenuItem";
-            this.файлыToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
-            this.файлыToolStripMenuItem.Text = "Файлы";
+            this.leftImgColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle2.NullValue")));
+            this.leftImgColumn.DefaultCellStyle = dataGridViewCellStyle2;
+            this.leftImgColumn.FillWeight = 60.9137F;
+            this.leftImgColumn.HeaderText = "Img";
+            this.leftImgColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.leftImgColumn.MinimumWidth = 35;
+            this.leftImgColumn.Name = "leftImgColumn";
+            this.leftImgColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.leftImgColumn.Width = 35;
             // 
-            // выделениеToolStripMenuItem
+            // leftNameColumn
             // 
-            this.выделениеToolStripMenuItem.Name = "выделениеToolStripMenuItem";
-            this.выделениеToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
-            this.выделениеToolStripMenuItem.Text = "Выделение";
+            this.leftNameColumn.FillWeight = 107.8173F;
+            this.leftNameColumn.HeaderText = "Name";
+            this.leftNameColumn.Name = "leftNameColumn";
             // 
-            // командыToolStripMenuItem
+            // leftExtColumn
             // 
-            this.командыToolStripMenuItem.Name = "командыToolStripMenuItem";
-            this.командыToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
-            this.командыToolStripMenuItem.Text = "Команды";
+            this.leftExtColumn.FillWeight = 107.8173F;
+            this.leftExtColumn.HeaderText = "Ext";
+            this.leftExtColumn.Name = "leftExtColumn";
             // 
-            // panel1
+            // leftSizeColumn
             // 
-            this.panel1.Controls.Add(this.leftDiskSpaceInfo);
-            this.panel1.Controls.Add(this.leftDiskDropDown);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(354, 21);
-            this.panel1.TabIndex = 1;
+            this.leftSizeColumn.FillWeight = 107.8173F;
+            this.leftSizeColumn.HeaderText = "Size";
+            this.leftSizeColumn.Name = "leftSizeColumn";
+            // 
+            // leftDateColumn
+            // 
+            this.leftDateColumn.FillWeight = 107.8173F;
+            this.leftDateColumn.HeaderText = "Date";
+            this.leftDateColumn.Name = "leftDateColumn";
+            // 
+            // leftAttrColumn
+            // 
+            this.leftAttrColumn.FillWeight = 107.8173F;
+            this.leftAttrColumn.HeaderText = "Attr";
+            this.leftAttrColumn.Name = "leftAttrColumn";
             // 
             // leftPathInfo
             // 
@@ -139,29 +172,37 @@
             this.leftPathInfo.Text = "Path";
             this.leftPathInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // leftDataView
+            // panel1
             // 
-            this.leftDataView.AllowUserToAddRows = false;
-            this.leftDataView.AllowUserToDeleteRows = false;
-            this.leftDataView.AllowUserToResizeRows = false;
-            this.leftDataView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.leftDataView.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.leftDataView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.leftDataView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
-            this.leftDataView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.leftDataView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.ImgColumn,
-            this.NameColumn,
-            this.ExtColumn,
-            this.SizeColumn,
-            this.DateColumn,
-            this.AttrColumn});
-            this.leftDataView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.leftDataView.Location = new System.Drawing.Point(0, 42);
-            this.leftDataView.Name = "leftDataView";
-            this.leftDataView.RowHeadersVisible = false;
-            this.leftDataView.Size = new System.Drawing.Size(354, 380);
-            this.leftDataView.TabIndex = 3;
+            this.panel1.Controls.Add(this.leftDiskSpaceInfo);
+            this.panel1.Controls.Add(this.leftDiskDropDown);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(354, 21);
+            this.panel1.TabIndex = 1;
+            // 
+            // leftDiskSpaceInfo
+            // 
+            this.leftDiskSpaceInfo.BackColor = System.Drawing.SystemColors.Control;
+            this.leftDiskSpaceInfo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.leftDiskSpaceInfo.Location = new System.Drawing.Point(43, 0);
+            this.leftDiskSpaceInfo.Name = "leftDiskSpaceInfo";
+            this.leftDiskSpaceInfo.Size = new System.Drawing.Size(311, 21);
+            this.leftDiskSpaceInfo.TabIndex = 5;
+            this.leftDiskSpaceInfo.Text = "0 из 0 свободно";
+            this.leftDiskSpaceInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // leftDiskDropDown
+            // 
+            this.leftDiskDropDown.Dock = System.Windows.Forms.DockStyle.Left;
+            this.leftDiskDropDown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.leftDiskDropDown.FormattingEnabled = true;
+            this.leftDiskDropDown.Location = new System.Drawing.Point(0, 0);
+            this.leftDiskDropDown.Name = "leftDiskDropDown";
+            this.leftDiskDropDown.Size = new System.Drawing.Size(43, 21);
+            this.leftDiskDropDown.TabIndex = 4;
+            this.leftDiskDropDown.SelectedIndexChanged += new System.EventHandler(this.leftDiskDropDown_SelectedIndexChanged);
             // 
             // rightDataView
             // 
@@ -174,18 +215,61 @@
             this.rightDataView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.rightDataView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.rightDataView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewImageColumn1,
-            this.dataGridViewTextBoxColumn1,
-            this.dataGridViewTextBoxColumn2,
-            this.dataGridViewTextBoxColumn3,
-            this.dataGridViewTextBoxColumn4,
-            this.dataGridViewTextBoxColumn5});
+            this.rightImgColumn,
+            this.rightNameColumn,
+            this.rightExtColumn,
+            this.rightSizeColumn,
+            this.rightDateColumn,
+            this.rightAttrColumn});
             this.rightDataView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rightDataView.Location = new System.Drawing.Point(0, 42);
+            this.rightDataView.MultiSelect = false;
             this.rightDataView.Name = "rightDataView";
             this.rightDataView.RowHeadersVisible = false;
+            this.rightDataView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.rightDataView.Size = new System.Drawing.Size(434, 380);
             this.rightDataView.TabIndex = 6;
+            // 
+            // rightImgColumn
+            // 
+            this.rightImgColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.rightImgColumn.FillWeight = 106.599F;
+            this.rightImgColumn.HeaderText = "Img";
+            this.rightImgColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.rightImgColumn.MinimumWidth = 35;
+            this.rightImgColumn.Name = "rightImgColumn";
+            this.rightImgColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.rightImgColumn.Width = 35;
+            // 
+            // rightNameColumn
+            // 
+            this.rightNameColumn.FillWeight = 98.68019F;
+            this.rightNameColumn.HeaderText = "Name";
+            this.rightNameColumn.Name = "rightNameColumn";
+            // 
+            // rightExtColumn
+            // 
+            this.rightExtColumn.FillWeight = 98.68019F;
+            this.rightExtColumn.HeaderText = "Ext";
+            this.rightExtColumn.Name = "rightExtColumn";
+            // 
+            // rightSizeColumn
+            // 
+            this.rightSizeColumn.FillWeight = 98.68019F;
+            this.rightSizeColumn.HeaderText = "Size";
+            this.rightSizeColumn.Name = "rightSizeColumn";
+            // 
+            // rightDateColumn
+            // 
+            this.rightDateColumn.FillWeight = 98.68019F;
+            this.rightDateColumn.HeaderText = "Date";
+            this.rightDateColumn.Name = "rightDateColumn";
+            // 
+            // rightAttrColumn
+            // 
+            this.rightAttrColumn.FillWeight = 98.68019F;
+            this.rightAttrColumn.HeaderText = "Attr";
+            this.rightAttrColumn.Name = "rightAttrColumn";
             // 
             // rightPathInfo
             // 
@@ -230,103 +314,35 @@
             this.rightDiskDropDown.TabIndex = 0;
             this.rightDiskDropDown.SelectedIndexChanged += new System.EventHandler(this.leftDiskDropDown_SelectedIndexChanged);
             // 
-            // leftDiskSpaceInfo
+            // mainMenuStrip
             // 
-            this.leftDiskSpaceInfo.BackColor = System.Drawing.SystemColors.Control;
-            this.leftDiskSpaceInfo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.leftDiskSpaceInfo.Location = new System.Drawing.Point(43, 0);
-            this.leftDiskSpaceInfo.Name = "leftDiskSpaceInfo";
-            this.leftDiskSpaceInfo.Size = new System.Drawing.Size(311, 21);
-            this.leftDiskSpaceInfo.TabIndex = 5;
-            this.leftDiskSpaceInfo.Text = "0 из 0 свободно";
-            this.leftDiskSpaceInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.файлыToolStripMenuItem,
+            this.выделениеToolStripMenuItem,
+            this.командыToolStripMenuItem});
+            this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
+            this.mainMenuStrip.Name = "mainMenuStrip";
+            this.mainMenuStrip.Size = new System.Drawing.Size(800, 24);
+            this.mainMenuStrip.TabIndex = 2;
+            this.mainMenuStrip.Text = "menuStrip1";
             // 
-            // leftDiskDropDown
+            // файлыToolStripMenuItem
             // 
-            this.leftDiskDropDown.Dock = System.Windows.Forms.DockStyle.Left;
-            this.leftDiskDropDown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.leftDiskDropDown.FormattingEnabled = true;
-            this.leftDiskDropDown.Location = new System.Drawing.Point(0, 0);
-            this.leftDiskDropDown.Name = "leftDiskDropDown";
-            this.leftDiskDropDown.Size = new System.Drawing.Size(43, 21);
-            this.leftDiskDropDown.TabIndex = 4;
-            this.leftDiskDropDown.SelectedIndexChanged += new System.EventHandler(this.leftDiskDropDown_SelectedIndexChanged);
+            this.файлыToolStripMenuItem.Name = "файлыToolStripMenuItem";
+            this.файлыToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
+            this.файлыToolStripMenuItem.Text = "Файлы";
             // 
-            // ImgColumn
+            // выделениеToolStripMenuItem
             // 
-            this.ImgColumn.FillWeight = 106.599F;
-            this.ImgColumn.HeaderText = "Img";
-            this.ImgColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
-            this.ImgColumn.Name = "ImgColumn";
-            this.ImgColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.выделениеToolStripMenuItem.Name = "выделениеToolStripMenuItem";
+            this.выделениеToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
+            this.выделениеToolStripMenuItem.Text = "Выделение";
             // 
-            // NameColumn
+            // командыToolStripMenuItem
             // 
-            this.NameColumn.FillWeight = 98.6802F;
-            this.NameColumn.HeaderText = "Name";
-            this.NameColumn.Name = "NameColumn";
-            // 
-            // ExtColumn
-            // 
-            this.ExtColumn.FillWeight = 98.6802F;
-            this.ExtColumn.HeaderText = "Ext";
-            this.ExtColumn.Name = "ExtColumn";
-            // 
-            // SizeColumn
-            // 
-            this.SizeColumn.FillWeight = 98.6802F;
-            this.SizeColumn.HeaderText = "Size";
-            this.SizeColumn.Name = "SizeColumn";
-            // 
-            // DateColumn
-            // 
-            this.DateColumn.FillWeight = 98.6802F;
-            this.DateColumn.HeaderText = "Date";
-            this.DateColumn.Name = "DateColumn";
-            // 
-            // AttrColumn
-            // 
-            this.AttrColumn.FillWeight = 98.6802F;
-            this.AttrColumn.HeaderText = "Attr";
-            this.AttrColumn.Name = "AttrColumn";
-            // 
-            // dataGridViewImageColumn1
-            // 
-            this.dataGridViewImageColumn1.FillWeight = 97.46193F;
-            this.dataGridViewImageColumn1.HeaderText = "Img";
-            this.dataGridViewImageColumn1.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
-            this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
-            this.dataGridViewImageColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.FillWeight = 100.5076F;
-            this.dataGridViewTextBoxColumn1.HeaderText = "Name";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            this.dataGridViewTextBoxColumn2.FillWeight = 100.5076F;
-            this.dataGridViewTextBoxColumn2.HeaderText = "Ext";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            // 
-            // dataGridViewTextBoxColumn3
-            // 
-            this.dataGridViewTextBoxColumn3.FillWeight = 100.5076F;
-            this.dataGridViewTextBoxColumn3.HeaderText = "Size";
-            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            // 
-            // dataGridViewTextBoxColumn4
-            // 
-            this.dataGridViewTextBoxColumn4.FillWeight = 100.5076F;
-            this.dataGridViewTextBoxColumn4.HeaderText = "Date";
-            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-            // 
-            // dataGridViewTextBoxColumn5
-            // 
-            this.dataGridViewTextBoxColumn5.FillWeight = 100.5076F;
-            this.dataGridViewTextBoxColumn5.HeaderText = "Attr";
-            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+            this.командыToolStripMenuItem.Name = "командыToolStripMenuItem";
+            this.командыToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
+            this.командыToolStripMenuItem.Text = "Команды";
             // 
             // MainWindow
             // 
@@ -345,12 +361,12 @@
             this.MainSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).EndInit();
             this.MainSplitContainer.ResumeLayout(false);
-            this.mainMenuStrip.ResumeLayout(false);
-            this.mainMenuStrip.PerformLayout();
-            this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.leftDataView)).EndInit();
+            this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.rightDataView)).EndInit();
             this.panel2.ResumeLayout(false);
+            this.mainMenuStrip.ResumeLayout(false);
+            this.mainMenuStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -372,17 +388,17 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label rightDiskSpaceInfo;
         private System.Windows.Forms.ComboBox rightDiskDropDown;
-        private System.Windows.Forms.DataGridViewImageColumn ImgColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ExtColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn SizeColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn DateColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn AttrColumn;
-        private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+        private System.Windows.Forms.DataGridViewImageColumn leftImgColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn leftNameColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn leftExtColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn leftSizeColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn leftDateColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn leftAttrColumn;
+        private System.Windows.Forms.DataGridViewImageColumn rightImgColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn rightNameColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn rightExtColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn rightSizeColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn rightDateColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn rightAttrColumn;
     }
 }
