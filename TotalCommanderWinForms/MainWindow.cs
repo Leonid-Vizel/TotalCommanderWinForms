@@ -15,6 +15,8 @@ namespace TotalCommanderWinForms
 {
     public partial class MainWindow : Form
     {
+        private static string prohibitedSymbols = "\\|/*:?\"<>";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -49,7 +51,7 @@ namespace TotalCommanderWinForms
                 DataGridViewRow row = new DataGridViewRow();
                 row.CreateCells(gridView);
                 row.Tag = info;
-                row.SetValues(new object[6] { Icon.ExtractAssociatedIcon(info.FullName), info.Name, info.Extension, info.Length, info.LastWriteTime.ToString("dd.MM.yyyy"), info.Attributes });
+                row.SetValues(new object[6] { Icon.ExtractAssociatedIcon(info.FullName), Path.GetFileNameWithoutExtension(info.Name), info.Extension, info.Length, info.LastWriteTime.ToString("dd.MM.yyyy"), info.Attributes });
                 gridView.Rows.Add(row);
             }
         }
@@ -62,6 +64,7 @@ namespace TotalCommanderWinForms
                 rowInsert.CreateCells(gridView);
                 rowInsert.Tag = currentDirectory.Parent;
                 rowInsert.SetValues(new object[6] { SystemIcons.Exclamation, "[Назад]", "", "", "", "" });
+                rowInsert.Cells[1].ReadOnly = true;
                 gridView.Rows.Add(rowInsert);
             }
 
@@ -81,7 +84,7 @@ namespace TotalCommanderWinForms
                 DataGridViewRow row = new DataGridViewRow();
                 row.CreateCells(gridView);
                 row.Tag = info;
-                row.SetValues(new object[6] { Icon.ExtractAssociatedIcon(info.FullName), info.Name, info.Extension, info.Length, info.LastWriteTime.ToString("dd.MM.yyyy"), info.Attributes });
+                row.SetValues(new object[6] { Icon.ExtractAssociatedIcon(info.FullName), Path.GetFileNameWithoutExtension(info.Name), info.Extension, info.Length, info.LastWriteTime.ToString("dd.MM.yyyy"), info.Attributes });
                 gridView.Rows.Add(row);
             }
         }
@@ -125,6 +128,76 @@ namespace TotalCommanderWinForms
             else
             {
                 Process.Start((rowTag as FileInfo).FullName);
+            }
+        }
+
+        private void leftDataView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            DataGridViewRow selectedRow = leftDataView.Rows[e.RowIndex];
+            object rowTag = selectedRow.Tag;
+            if (rowTag == null)
+            {
+                return;
+            }
+            string editedText = leftDataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+            if (editedText.Any(x=>prohibitedSymbols.Contains(x)))
+            {
+                MessageBox.Show($"Символы {prohibitedSymbols} нельзя использоватеть в названиях директорий и файлов!","Ошибка");
+                if (rowTag is DirectoryInfo)
+                {
+                    leftDataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = (rowTag as DirectoryInfo).Name;
+                }
+                else
+                {
+                    leftDataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = (rowTag as FileInfo).Name;
+                }
+                return;
+            }
+            if (rowTag is DirectoryInfo)
+            {
+                DirectoryInfo info = rowTag as DirectoryInfo;
+                if (info.Name.Equals(editedText))
+                {
+                    return;
+                }
+                if (File.Exists($"{info.Parent.FullName}\\{editedText}"))
+                {
+                    MessageBox.Show("Такая папка уже существует", "Ошибка");
+                    leftDataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = info.Name;
+                    return;
+                }    
+                try
+                {
+                    Directory.Move(info.FullName, $"{info.Parent.FullName}\\{editedText}");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка переименования директории","Ошибка");
+                    leftDataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = info.Name;
+                }
+            }
+            else
+            {
+                FileInfo info = rowTag as FileInfo;
+                if (info.Name.Equals(editedText))
+                {
+                    return;
+                }
+                if (File.Exists($"{info.Directory.FullName}\\{editedText}{info.Extension}"))
+                {
+                    MessageBox.Show("Такой файл уже существует", "Ошибка");
+                    leftDataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = Path.GetFileNameWithoutExtension(info.Name);
+                    return;
+                }
+                try
+                {
+                    File.Move(info.FullName, $"{info.Directory.FullName}\\{editedText}{info.Extension}");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка переименования директории", "Ошибка");
+                    leftDataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = Path.GetFileNameWithoutExtension(info.Name);
+                }
             }
         }
     }

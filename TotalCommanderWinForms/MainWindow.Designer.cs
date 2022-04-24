@@ -32,12 +32,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.MainSplitContainer = new System.Windows.Forms.SplitContainer();
             this.leftDataView = new System.Windows.Forms.DataGridView();
-            this.leftImgColumn = new System.Windows.Forms.DataGridViewImageColumn();
-            this.leftNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.leftExtColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.leftSizeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.leftDateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.leftAttrColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.leftPathInfo = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.leftDiskSpaceInfo = new System.Windows.Forms.Label();
@@ -57,6 +51,12 @@
             this.файлыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.выделениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.командыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.leftImgColumn = new System.Windows.Forms.DataGridViewImageColumn();
+            this.leftNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.leftExtColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.leftSizeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.leftDateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.leftAttrColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).BeginInit();
             this.MainSplitContainer.Panel1.SuspendLayout();
             this.MainSplitContainer.Panel2.SuspendLayout();
@@ -116,50 +116,7 @@
             this.leftDataView.Size = new System.Drawing.Size(354, 380);
             this.leftDataView.TabIndex = 3;
             this.leftDataView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.leftDataView_CellDoubleClick);
-            // 
-            // leftImgColumn
-            // 
-            this.leftImgColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle2.NullValue")));
-            this.leftImgColumn.DefaultCellStyle = dataGridViewCellStyle2;
-            this.leftImgColumn.FillWeight = 60.9137F;
-            this.leftImgColumn.HeaderText = "Img";
-            this.leftImgColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
-            this.leftImgColumn.MinimumWidth = 35;
-            this.leftImgColumn.Name = "leftImgColumn";
-            this.leftImgColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.leftImgColumn.Width = 35;
-            // 
-            // leftNameColumn
-            // 
-            this.leftNameColumn.FillWeight = 107.8173F;
-            this.leftNameColumn.HeaderText = "Name";
-            this.leftNameColumn.Name = "leftNameColumn";
-            // 
-            // leftExtColumn
-            // 
-            this.leftExtColumn.FillWeight = 107.8173F;
-            this.leftExtColumn.HeaderText = "Ext";
-            this.leftExtColumn.Name = "leftExtColumn";
-            // 
-            // leftSizeColumn
-            // 
-            this.leftSizeColumn.FillWeight = 107.8173F;
-            this.leftSizeColumn.HeaderText = "Size";
-            this.leftSizeColumn.Name = "leftSizeColumn";
-            // 
-            // leftDateColumn
-            // 
-            this.leftDateColumn.FillWeight = 107.8173F;
-            this.leftDateColumn.HeaderText = "Date";
-            this.leftDateColumn.Name = "leftDateColumn";
-            // 
-            // leftAttrColumn
-            // 
-            this.leftAttrColumn.FillWeight = 107.8173F;
-            this.leftAttrColumn.HeaderText = "Attr";
-            this.leftAttrColumn.Name = "leftAttrColumn";
+            this.leftDataView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.leftDataView_CellEndEdit);
             // 
             // leftPathInfo
             // 
@@ -344,6 +301,54 @@
             this.командыToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
             this.командыToolStripMenuItem.Text = "Команды";
             // 
+            // leftImgColumn
+            // 
+            this.leftImgColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle2.NullValue")));
+            this.leftImgColumn.DefaultCellStyle = dataGridViewCellStyle2;
+            this.leftImgColumn.FillWeight = 60.9137F;
+            this.leftImgColumn.HeaderText = "Img";
+            this.leftImgColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.leftImgColumn.MinimumWidth = 35;
+            this.leftImgColumn.Name = "leftImgColumn";
+            this.leftImgColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.leftImgColumn.Width = 35;
+            // 
+            // leftNameColumn
+            // 
+            this.leftNameColumn.FillWeight = 107.8173F;
+            this.leftNameColumn.HeaderText = "Name";
+            this.leftNameColumn.Name = "leftNameColumn";
+            // 
+            // leftExtColumn
+            // 
+            this.leftExtColumn.FillWeight = 107.8173F;
+            this.leftExtColumn.HeaderText = "Ext";
+            this.leftExtColumn.Name = "leftExtColumn";
+            this.leftExtColumn.ReadOnly = true;
+            // 
+            // leftSizeColumn
+            // 
+            this.leftSizeColumn.FillWeight = 107.8173F;
+            this.leftSizeColumn.HeaderText = "Size";
+            this.leftSizeColumn.Name = "leftSizeColumn";
+            this.leftSizeColumn.ReadOnly = true;
+            // 
+            // leftDateColumn
+            // 
+            this.leftDateColumn.FillWeight = 107.8173F;
+            this.leftDateColumn.HeaderText = "Date";
+            this.leftDateColumn.Name = "leftDateColumn";
+            this.leftDateColumn.ReadOnly = true;
+            // 
+            // leftAttrColumn
+            // 
+            this.leftAttrColumn.FillWeight = 107.8173F;
+            this.leftAttrColumn.HeaderText = "Attr";
+            this.leftAttrColumn.Name = "leftAttrColumn";
+            this.leftAttrColumn.ReadOnly = true;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -388,17 +393,17 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label rightDiskSpaceInfo;
         private System.Windows.Forms.ComboBox rightDiskDropDown;
-        private System.Windows.Forms.DataGridViewImageColumn leftImgColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn leftNameColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn leftExtColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn leftSizeColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn leftDateColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn leftAttrColumn;
         private System.Windows.Forms.DataGridViewImageColumn rightImgColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn rightNameColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn rightExtColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn rightSizeColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn rightDateColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn rightAttrColumn;
+        private System.Windows.Forms.DataGridViewImageColumn leftImgColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn leftNameColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn leftExtColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn leftSizeColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn leftDateColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn leftAttrColumn;
     }
 }
