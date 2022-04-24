@@ -1,25 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TotalCommanderWinForms
 {
     public partial class MainWindow : Form
     {
-        private static string prohibitedSymbols = "\\|/*:?\"<>";
+        private static string prohibitedSymbols;
+        private static string dateFormat;
+        private WindowSide side;
+
+        static MainWindow()
+        {
+            prohibitedSymbols = "\\|/*:?\"<>";
+            dateFormat = "dd.MM.yyyy HH:mm:ss";
+        }
 
         public MainWindow()
         {
+            side = WindowSide.Left;
             InitializeComponent();
+            leftDataView.Click += new EventHandler((sender,e) => {side = WindowSide.Left;});
+            rightDataView.Click += new EventHandler((sender, e) => {side = WindowSide.Right;});
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
@@ -34,14 +41,13 @@ namespace TotalCommanderWinForms
 
         private void LoadFilesFromDisk(DriveInfo currentDrive, DataGridView gridView)
         {
-
             foreach (string directoryPath in Directory.GetDirectories(currentDrive.Name))
             {
                 DirectoryInfo info = new DirectoryInfo(directoryPath);
                 DataGridViewRow row = new DataGridViewRow();
                 row.CreateCells(gridView);
                 row.Tag = info;
-                row.SetValues(new object[6] { DefaultIcons.Folder, info.Name, "<DIR>", "<DIR>", info.LastWriteTime.ToString("dd.MM.yyyy"), info.Attributes });
+                row.SetValues(new object[6] { DefaultIcons.Folder, info.Name, "<DIR>", "<DIR>", info.LastWriteTime.ToString(dateFormat), info.Attributes });
                 gridView.Rows.Add(row);
             }
 
@@ -51,24 +57,25 @@ namespace TotalCommanderWinForms
                 DataGridViewRow row = new DataGridViewRow();
                 row.CreateCells(gridView);
                 row.Tag = info;
-                row.SetValues(new object[6] { Icon.ExtractAssociatedIcon(info.FullName), Path.GetFileNameWithoutExtension(info.Name), info.Extension, info.Length, info.LastWriteTime.ToString("dd.MM.yyyy"), info.Attributes });
+                row.SetValues(new object[6] { Icon.ExtractAssociatedIcon(info.FullName), Path.GetFileNameWithoutExtension(info.Name), info.Extension, info.Length, info.LastWriteTime.ToString(dateFormat), info.Attributes });
                 gridView.Rows.Add(row);
             }
+            gridView.Tag = new DirectoryInfo(currentDrive.Name);
         }
 
         private void LoadFilesFromDirectory(DirectoryInfo currentDirectory, DataGridView gridView)
         {
-            if (!currentDirectory.FullName.EndsWith("\\"))
+            if (!currentDirectory.FullName.EndsWith(":\\"))
             {
-                //А
+                //^
                 //| Проевка является ли директория диском, так как для диска выписывается ограничение доступа
                 try
                 {
-                    //Добавить Tty-Catch блок, так как для некоторых папок невозможно определить права доступа (Такие папки, как Config.MSI) и выдаёт исключение
+                    //Добавить Try-Catch блок, так как для некоторых папок невозможно определить права доступа (Такие папки, как Config.MSI) и выдаёт исключение
                     DirectorySecurity securityInfo = Directory.GetAccessControl(currentDirectory.FullName);
                     if (securityInfo.AreAccessRulesProtected)
                     {
-                        MessageBox.Show("Программа не имеет дсотупа к этой папке", "Ошибка доступа");
+                        MessageBox.Show("Программа не имеет доступа к этой папке", "Ошибка доступа");
                         return;
                     }
                 }
@@ -95,7 +102,7 @@ namespace TotalCommanderWinForms
                 DataGridViewRow row = new DataGridViewRow();
                 row.CreateCells(gridView);
                 row.Tag = info;
-                row.SetValues(new object[6] { DefaultIcons.Folder, info.Name, "<DIR>", "<DIR>", info.LastWriteTime.ToString("dd.MM.yyyy"), info.Attributes });
+                row.SetValues(new object[6] { DefaultIcons.Folder, info.Name, "<DIR>", "<DIR>", info.LastWriteTime.ToString(dateFormat), info.Attributes });
                 gridView.Rows.Add(row);
             }
 
@@ -105,7 +112,7 @@ namespace TotalCommanderWinForms
                 DataGridViewRow row = new DataGridViewRow();
                 row.CreateCells(gridView);
                 row.Tag = info;
-                row.SetValues(new object[6] { Icon.ExtractAssociatedIcon(info.FullName), Path.GetFileNameWithoutExtension(info.Name), info.Extension, info.Length, info.LastWriteTime.ToString("dd.MM.yyyy"), info.Attributes });
+                row.SetValues(new object[6] { Icon.ExtractAssociatedIcon(info.FullName), Path.GetFileNameWithoutExtension(info.Name), info.Extension, info.Length, info.LastWriteTime.ToString(dateFormat), info.Attributes });
                 gridView.Rows.Add(row);
             }
         }
@@ -158,10 +165,7 @@ namespace TotalCommanderWinForms
                     foreach (DataGridViewRow row in dataView.Rows)
                     {
                         DirectoryInfo rowDirectoryInfo = row.Tag as DirectoryInfo;
-                        if (rowDirectoryInfo != null && rowDirectoryInfo.FullName.Equals(viewInfo.FullName))
-                        {
-                            row.Selected = true;
-                        }
+                        row.Selected = rowDirectoryInfo != null && rowDirectoryInfo.FullName.Equals(viewInfo.FullName);
                     }
                 }
                 dataView.Tag = rowTag;
@@ -246,5 +250,56 @@ namespace TotalCommanderWinForms
                 }
             }
         }
+
+        public void CopyToClipboard()
+        {
+            DataGridViewRowCollection rowCollection = null;
+            switch(side)
+            {
+                case WindowSide.Left:
+                    rowCollection = leftDataView.Rows;
+                    break;
+                case WindowSide.Right:
+                    rowCollection = rightDataView.Rows;
+                    break;
+            }
+            if (rowCollection != null)
+            {
+                StringCollection CopyCollection = new StringCollection();
+                foreach (DataGridViewRow row in rowCollection)
+                {
+                    if (row.Selected)
+                    {
+                        FileInfo fileInfo = row.Tag as FileInfo;
+                        DirectoryInfo dirInfo = row.Tag as DirectoryInfo;
+                        if (fileInfo != null)
+                        {
+                            CopyCollection.Add(fileInfo.FullName);
+                        }
+                        else if (dirInfo != null)
+                        {
+                            CopyCollection.Add(dirInfo.FullName);
+                        }
+                    }
+                }
+                Clipboard.SetFileDropList(CopyCollection);
+            }
+        }
+
+        public void InsertFromClipBoard()
+        {
+            
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            CopyToClipboard();
+        }
+    }
+
+    public enum WindowSide
+    {
+        Left,
+        Right
     }
 }
