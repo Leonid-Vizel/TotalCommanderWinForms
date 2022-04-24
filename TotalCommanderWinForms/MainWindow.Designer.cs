@@ -28,21 +28,28 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.MainSplitContainer = new System.Windows.Forms.SplitContainer();
             this.leftDataView = new System.Windows.Forms.DataGridView();
+            this.leftImgColumn = new System.Windows.Forms.DataGridViewImageColumn();
+            this.leftNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.leftExtColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.leftSizeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.leftDateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.leftAttrColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.leftPathInfo = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.leftDiskSpaceInfo = new System.Windows.Forms.Label();
             this.leftDiskDropDown = new System.Windows.Forms.ComboBox();
             this.rightDataView = new System.Windows.Forms.DataGridView();
-            this.rightImgColumn = new System.Windows.Forms.DataGridViewImageColumn();
-            this.rightNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.rightExtColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.rightSizeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.rightDateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.rightAttrColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.rightPathInfo = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.rightDiskSpaceInfo = new System.Windows.Forms.Label();
@@ -51,12 +58,6 @@
             this.файлыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.выделениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.командыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.leftImgColumn = new System.Windows.Forms.DataGridViewImageColumn();
-            this.leftNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.leftExtColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.leftSizeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.leftDateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.leftAttrColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).BeginInit();
             this.MainSplitContainer.Panel1.SuspendLayout();
             this.MainSplitContainer.Panel2.SuspendLayout();
@@ -115,8 +116,56 @@
             this.leftDataView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.leftDataView.Size = new System.Drawing.Size(354, 380);
             this.leftDataView.TabIndex = 3;
-            this.leftDataView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.leftDataView_CellDoubleClick);
-            this.leftDataView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.leftDataView_CellEndEdit);
+            this.leftDataView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellDoubleClick);
+            this.leftDataView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellEndEdit);
+            // 
+            // leftImgColumn
+            // 
+            this.leftImgColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle1.NullValue")));
+            this.leftImgColumn.DefaultCellStyle = dataGridViewCellStyle1;
+            this.leftImgColumn.FillWeight = 60.9137F;
+            this.leftImgColumn.HeaderText = "Img";
+            this.leftImgColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.leftImgColumn.MinimumWidth = 35;
+            this.leftImgColumn.Name = "leftImgColumn";
+            this.leftImgColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.leftImgColumn.Width = 35;
+            // 
+            // leftNameColumn
+            // 
+            this.leftNameColumn.FillWeight = 107.8173F;
+            this.leftNameColumn.HeaderText = "Name";
+            this.leftNameColumn.Name = "leftNameColumn";
+            // 
+            // leftExtColumn
+            // 
+            this.leftExtColumn.FillWeight = 107.8173F;
+            this.leftExtColumn.HeaderText = "Ext";
+            this.leftExtColumn.Name = "leftExtColumn";
+            this.leftExtColumn.ReadOnly = true;
+            // 
+            // leftSizeColumn
+            // 
+            this.leftSizeColumn.FillWeight = 107.8173F;
+            this.leftSizeColumn.HeaderText = "Size";
+            this.leftSizeColumn.Name = "leftSizeColumn";
+            this.leftSizeColumn.ReadOnly = true;
+            // 
+            // leftDateColumn
+            // 
+            this.leftDateColumn.FillWeight = 107.8173F;
+            this.leftDateColumn.HeaderText = "Date";
+            this.leftDateColumn.Name = "leftDateColumn";
+            this.leftDateColumn.ReadOnly = true;
+            // 
+            // leftAttrColumn
+            // 
+            this.leftAttrColumn.FillWeight = 107.8173F;
+            this.leftAttrColumn.HeaderText = "Attr";
+            this.leftAttrColumn.Name = "leftAttrColumn";
+            this.leftAttrColumn.ReadOnly = true;
             // 
             // leftPathInfo
             // 
@@ -172,12 +221,12 @@
             this.rightDataView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.rightDataView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.rightDataView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.rightImgColumn,
-            this.rightNameColumn,
-            this.rightExtColumn,
-            this.rightSizeColumn,
-            this.rightDateColumn,
-            this.rightAttrColumn});
+            this.dataGridViewImageColumn1,
+            this.dataGridViewTextBoxColumn1,
+            this.dataGridViewTextBoxColumn2,
+            this.dataGridViewTextBoxColumn3,
+            this.dataGridViewTextBoxColumn4,
+            this.dataGridViewTextBoxColumn5});
             this.rightDataView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rightDataView.Location = new System.Drawing.Point(0, 42);
             this.rightDataView.MultiSelect = false;
@@ -186,47 +235,56 @@
             this.rightDataView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.rightDataView.Size = new System.Drawing.Size(434, 380);
             this.rightDataView.TabIndex = 6;
+            this.rightDataView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellDoubleClick);
+            this.rightDataView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellEndEdit);
             // 
-            // rightImgColumn
+            // dataGridViewImageColumn1
             // 
-            this.rightImgColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.rightImgColumn.FillWeight = 106.599F;
-            this.rightImgColumn.HeaderText = "Img";
-            this.rightImgColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
-            this.rightImgColumn.MinimumWidth = 35;
-            this.rightImgColumn.Name = "rightImgColumn";
-            this.rightImgColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.rightImgColumn.Width = 35;
+            this.dataGridViewImageColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle2.NullValue")));
+            this.dataGridViewImageColumn1.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridViewImageColumn1.FillWeight = 60.9137F;
+            this.dataGridViewImageColumn1.HeaderText = "Img";
+            this.dataGridViewImageColumn1.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.dataGridViewImageColumn1.MinimumWidth = 35;
+            this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
+            this.dataGridViewImageColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewImageColumn1.Width = 35;
             // 
-            // rightNameColumn
+            // dataGridViewTextBoxColumn1
             // 
-            this.rightNameColumn.FillWeight = 98.68019F;
-            this.rightNameColumn.HeaderText = "Name";
-            this.rightNameColumn.Name = "rightNameColumn";
+            this.dataGridViewTextBoxColumn1.FillWeight = 107.8173F;
+            this.dataGridViewTextBoxColumn1.HeaderText = "Name";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
             // 
-            // rightExtColumn
+            // dataGridViewTextBoxColumn2
             // 
-            this.rightExtColumn.FillWeight = 98.68019F;
-            this.rightExtColumn.HeaderText = "Ext";
-            this.rightExtColumn.Name = "rightExtColumn";
+            this.dataGridViewTextBoxColumn2.FillWeight = 107.8173F;
+            this.dataGridViewTextBoxColumn2.HeaderText = "Ext";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.ReadOnly = true;
             // 
-            // rightSizeColumn
+            // dataGridViewTextBoxColumn3
             // 
-            this.rightSizeColumn.FillWeight = 98.68019F;
-            this.rightSizeColumn.HeaderText = "Size";
-            this.rightSizeColumn.Name = "rightSizeColumn";
+            this.dataGridViewTextBoxColumn3.FillWeight = 107.8173F;
+            this.dataGridViewTextBoxColumn3.HeaderText = "Size";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            this.dataGridViewTextBoxColumn3.ReadOnly = true;
             // 
-            // rightDateColumn
+            // dataGridViewTextBoxColumn4
             // 
-            this.rightDateColumn.FillWeight = 98.68019F;
-            this.rightDateColumn.HeaderText = "Date";
-            this.rightDateColumn.Name = "rightDateColumn";
+            this.dataGridViewTextBoxColumn4.FillWeight = 107.8173F;
+            this.dataGridViewTextBoxColumn4.HeaderText = "Date";
+            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            this.dataGridViewTextBoxColumn4.ReadOnly = true;
             // 
-            // rightAttrColumn
+            // dataGridViewTextBoxColumn5
             // 
-            this.rightAttrColumn.FillWeight = 98.68019F;
-            this.rightAttrColumn.HeaderText = "Attr";
-            this.rightAttrColumn.Name = "rightAttrColumn";
+            this.dataGridViewTextBoxColumn5.FillWeight = 107.8173F;
+            this.dataGridViewTextBoxColumn5.HeaderText = "Attr";
+            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+            this.dataGridViewTextBoxColumn5.ReadOnly = true;
             // 
             // rightPathInfo
             // 
@@ -301,54 +359,6 @@
             this.командыToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
             this.командыToolStripMenuItem.Text = "Команды";
             // 
-            // leftImgColumn
-            // 
-            this.leftImgColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle2.NullValue")));
-            this.leftImgColumn.DefaultCellStyle = dataGridViewCellStyle2;
-            this.leftImgColumn.FillWeight = 60.9137F;
-            this.leftImgColumn.HeaderText = "Img";
-            this.leftImgColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
-            this.leftImgColumn.MinimumWidth = 35;
-            this.leftImgColumn.Name = "leftImgColumn";
-            this.leftImgColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.leftImgColumn.Width = 35;
-            // 
-            // leftNameColumn
-            // 
-            this.leftNameColumn.FillWeight = 107.8173F;
-            this.leftNameColumn.HeaderText = "Name";
-            this.leftNameColumn.Name = "leftNameColumn";
-            // 
-            // leftExtColumn
-            // 
-            this.leftExtColumn.FillWeight = 107.8173F;
-            this.leftExtColumn.HeaderText = "Ext";
-            this.leftExtColumn.Name = "leftExtColumn";
-            this.leftExtColumn.ReadOnly = true;
-            // 
-            // leftSizeColumn
-            // 
-            this.leftSizeColumn.FillWeight = 107.8173F;
-            this.leftSizeColumn.HeaderText = "Size";
-            this.leftSizeColumn.Name = "leftSizeColumn";
-            this.leftSizeColumn.ReadOnly = true;
-            // 
-            // leftDateColumn
-            // 
-            this.leftDateColumn.FillWeight = 107.8173F;
-            this.leftDateColumn.HeaderText = "Date";
-            this.leftDateColumn.Name = "leftDateColumn";
-            this.leftDateColumn.ReadOnly = true;
-            // 
-            // leftAttrColumn
-            // 
-            this.leftAttrColumn.FillWeight = 107.8173F;
-            this.leftAttrColumn.HeaderText = "Attr";
-            this.leftAttrColumn.Name = "leftAttrColumn";
-            this.leftAttrColumn.ReadOnly = true;
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -388,22 +398,22 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label leftDiskSpaceInfo;
         private System.Windows.Forms.ComboBox leftDiskDropDown;
-        private System.Windows.Forms.DataGridView rightDataView;
         private System.Windows.Forms.Label rightPathInfo;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label rightDiskSpaceInfo;
         private System.Windows.Forms.ComboBox rightDiskDropDown;
-        private System.Windows.Forms.DataGridViewImageColumn rightImgColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn rightNameColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn rightExtColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn rightSizeColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn rightDateColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn rightAttrColumn;
         private System.Windows.Forms.DataGridViewImageColumn leftImgColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn leftNameColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn leftExtColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn leftSizeColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn leftDateColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn leftAttrColumn;
+        private System.Windows.Forms.DataGridView rightDataView;
+        private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
     }
 }

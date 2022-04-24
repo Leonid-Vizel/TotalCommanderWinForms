@@ -58,6 +58,27 @@ namespace TotalCommanderWinForms
 
         private void LoadFilesFromDirectory(DirectoryInfo currentDirectory, DataGridView gridView)
         {
+            if (!currentDirectory.FullName.EndsWith("\\"))
+            {
+                //А
+                //| Проевка является ли директория диском, так как для диска выписывается ограничение доступа
+                try
+                {
+                    //Добавить Tty-Catch блок, так как для некоторых папок невозможно определить права доступа (Такие папки, как Config.MSI) и выдаёт исключение
+                    DirectorySecurity securityInfo = Directory.GetAccessControl(currentDirectory.FullName);
+                    if (securityInfo.AreAccessRulesProtected)
+                    {
+                        MessageBox.Show("Программа не имеет дсотупа к этой папке", "Ошибка доступа");
+                        return;
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("Программа не может получить права доступа к этой папке", "Ошибка");
+                    return;
+                }
+            }
+            gridView.Rows.Clear();
             if (currentDirectory.Parent != null)
             {
                 DataGridViewRow rowInsert = new DataGridViewRow();
@@ -116,14 +137,34 @@ namespace TotalCommanderWinForms
             }
         }
 
-        private void leftDataView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void OnCellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            DataGridViewRow selectedRow = leftDataView.Rows[e.RowIndex];
+            DataGridView dataView = sender as DataGridView;
+            if (dataView == null)
+            {
+                return;
+            }
+            DataGridViewRow selectedRow = dataView.Rows[e.RowIndex];
             object rowTag = selectedRow.Tag;
             if (rowTag is DirectoryInfo)
             {
-                leftDataView.Rows.Clear();
-                LoadFilesFromDirectory(rowTag as DirectoryInfo, leftDataView);
+                DirectoryInfo selectedRowInfo = rowTag as DirectoryInfo;
+                LoadFilesFromDirectory(selectedRowInfo, dataView);
+                DirectoryInfo viewInfo = dataView.Tag as DirectoryInfo;
+                //|     Проверка, чтобы лишний раз код нк исполнялся
+                //V
+                if (viewInfo != null && viewInfo.Parent != null && viewInfo.Parent.FullName.Equals(selectedRowInfo.FullName))
+                {
+                    foreach (DataGridViewRow row in dataView.Rows)
+                    {
+                        DirectoryInfo rowDirectoryInfo = row.Tag as DirectoryInfo;
+                        if (rowDirectoryInfo != null && rowDirectoryInfo.FullName.Equals(viewInfo.FullName))
+                        {
+                            row.Selected = true;
+                        }
+                    }
+                }
+                dataView.Tag = rowTag;
             }
             else
             {
@@ -131,25 +172,30 @@ namespace TotalCommanderWinForms
             }
         }
 
-        private void leftDataView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void OnCellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            DataGridViewRow selectedRow = leftDataView.Rows[e.RowIndex];
+            DataGridView dataView = sender as DataGridView;
+            if (dataView == null)
+            {
+                return;
+            }
+            DataGridViewRow selectedRow = dataView.Rows[e.RowIndex];
             object rowTag = selectedRow.Tag;
             if (rowTag == null)
             {
                 return;
             }
-            string editedText = leftDataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
-            if (editedText.Any(x=>prohibitedSymbols.Contains(x)))
+            string editedText = dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+            if (editedText.Any(x => prohibitedSymbols.Contains(x)))
             {
-                MessageBox.Show($"Символы {prohibitedSymbols} нельзя использоватеть в названиях директорий и файлов!","Ошибка");
+                MessageBox.Show($"Символы {prohibitedSymbols} нельзя использоватеть в названиях директорий и файлов!", "Ошибка");
                 if (rowTag is DirectoryInfo)
                 {
-                    leftDataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = (rowTag as DirectoryInfo).Name;
+                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = (rowTag as DirectoryInfo).Name;
                 }
                 else
                 {
-                    leftDataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = (rowTag as FileInfo).Name;
+                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = (rowTag as FileInfo).Name;
                 }
                 return;
             }
@@ -163,17 +209,17 @@ namespace TotalCommanderWinForms
                 if (File.Exists($"{info.Parent.FullName}\\{editedText}"))
                 {
                     MessageBox.Show("Такая папка уже существует", "Ошибка");
-                    leftDataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = info.Name;
+                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = info.Name;
                     return;
-                }    
+                }
                 try
                 {
                     Directory.Move(info.FullName, $"{info.Parent.FullName}\\{editedText}");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Ошибка переименования директории","Ошибка");
-                    leftDataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = info.Name;
+                    MessageBox.Show("Ошибка переименования директории", "Ошибка");
+                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = info.Name;
                 }
             }
             else
@@ -186,7 +232,7 @@ namespace TotalCommanderWinForms
                 if (File.Exists($"{info.Directory.FullName}\\{editedText}{info.Extension}"))
                 {
                     MessageBox.Show("Такой файл уже существует", "Ошибка");
-                    leftDataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = Path.GetFileNameWithoutExtension(info.Name);
+                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = Path.GetFileNameWithoutExtension(info.Name);
                     return;
                 }
                 try
@@ -196,7 +242,7 @@ namespace TotalCommanderWinForms
                 catch (Exception ex)
                 {
                     MessageBox.Show("Ошибка переименования директории", "Ошибка");
-                    leftDataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = Path.GetFileNameWithoutExtension(info.Name);
+                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = Path.GetFileNameWithoutExtension(info.Name);
                 }
             }
         }
