@@ -334,7 +334,14 @@ namespace TotalCommanderWinForms
 
         public static void CopyDirectory(DirectoryInfo source, DirectoryInfo target)
         {
-            Directory.CreateDirectory(target.FullName);
+            if (target.FullName.EndsWith("\\"))
+            {
+                 Directory.CreateDirectory($"{target.FullName}{source.Name}");
+            }
+            else
+            {
+                Directory.CreateDirectory($"{target.FullName}\\{source.Name}");
+            }
 
             // Copy each file into the new directory.
             foreach (FileInfo fi in source.GetFiles())
@@ -358,7 +365,72 @@ namespace TotalCommanderWinForms
 
         private void button3_Click(object sender, EventArgs e)
         {
-
+            DataGridView dataVeiwSender = null;
+            DataGridView dataVeiwReceiver = null;
+            switch (side)
+            {
+                case WindowSide.Left:
+                    dataVeiwSender = leftDataView;
+                    dataVeiwReceiver = rightDataView;
+                    break;
+                case WindowSide.Right:
+                    dataVeiwSender = rightDataView;
+                    dataVeiwReceiver = leftDataView;
+                    break;
+            }
+            if (dataVeiwSender != null && dataVeiwReceiver != null)
+            {
+                DirectoryInfo receiverDirectory = dataVeiwReceiver.Tag as DirectoryInfo;
+                foreach (DataGridViewRow row in dataVeiwSender.Rows)
+                {
+                    if (row.Selected && row.Cells[2].Value != null)
+                    {
+                        FileInfo fileInfo = row.Tag as FileInfo;
+                        DirectoryInfo dirInfo = row.Tag as DirectoryInfo;
+                        if (fileInfo != null)
+                        {
+                            try
+                            {
+                                fileInfo.CopyTo(receiverDirectory.FullName);
+                            }
+                            catch
+                            {
+                                MessageBox.Show($"Ошибка копирования файла {fileInfo.FullName}","Ошибка");
+                            }
+                        }
+                        else if (dirInfo != null)
+                        {
+                            if (dirInfo.FullName.Equals(receiverDirectory.FullName))
+                            {
+                                MessageBox.Show("Невозможно копировать папку саму в себя","Ошибка");
+                                return;
+                            }
+                            if (!receiverDirectory.GetDirectories().Select(x=>x.FullName).Any(x=>x.Equals(dirInfo.FullName)))
+                            {
+                                try
+                                {
+                                    CopyDirectory(dirInfo, receiverDirectory);
+                                }
+                                catch
+                                {
+                                    MessageBox.Show($"Ошибка копирования файла {fileInfo.FullName}", "Ошибка");
+                                    continue;
+                                }
+                                DirectoryInfo info = new DirectoryInfo($"{receiverDirectory}\\{dirInfo.Name}");
+                                DataGridViewRow newRow = new DataGridViewRow();
+                                newRow.CreateCells(dataVeiwReceiver);
+                                newRow.Tag = info;
+                                newRow.SetValues(new object[6] { DefaultIcons.Folder, info.Name, "<DIR>", "<DIR>", info.LastWriteTime.ToString(dateFormat), info.Attributes });
+                                dataVeiwReceiver.Rows.Add(newRow);
+                            }
+                            else
+                            {
+                                MessageBox.Show($"Папка с именем '{dirInfo.Name}' уже существует в '{receiverDirectory.FullName}'","Ошибка");
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
