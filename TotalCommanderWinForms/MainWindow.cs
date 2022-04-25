@@ -91,7 +91,7 @@ namespace TotalCommanderWinForms
                 DataGridViewRow rowInsert = new DataGridViewRow();
                 rowInsert.CreateCells(gridView);
                 rowInsert.Tag = currentDirectory.Parent;
-                rowInsert.SetValues(new object[6] { SystemIcons.Exclamation, "[Назад]", "", "", "", "" });
+                rowInsert.SetValues(new object[6] { SystemIcons.Exclamation, "[Назад]", null, null, null, null });
                 rowInsert.Cells[1].ReadOnly = true;
                 gridView.Rows.Add(rowInsert);
             }
@@ -271,7 +271,7 @@ namespace TotalCommanderWinForms
                 StringCollection CopyCollection = new StringCollection();
                 foreach (DataGridViewRow row in rowCollection)
                 {
-                    if (row.Selected)
+                    if (row.Selected && row.Cells[2].Value != null)
                     {
                         FileInfo fileInfo = row.Tag as FileInfo;
                         DirectoryInfo dirInfo = row.Tag as DirectoryInfo;
@@ -332,16 +332,6 @@ namespace TotalCommanderWinForms
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            CopyToClipboard();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            InsertFromClipboard();
-        }
-
         public static void CopyDirectory(DirectoryInfo source, DirectoryInfo target)
         {
             Directory.CreateDirectory(target.FullName);
@@ -358,6 +348,70 @@ namespace TotalCommanderWinForms
                 DirectoryInfo nextTargetSubDir =
                     target.CreateSubdirectory(diSourceSubDir.Name);
                 CopyDirectory(diSourceSubDir, nextTargetSubDir);
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            InsertFromClipboard();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DataGridView dataVeiw = null;
+            switch (side)
+            {
+                case WindowSide.Left:
+                    dataVeiw = leftDataView;
+                    break;
+                case WindowSide.Right:
+                    dataVeiw = rightDataView;
+                    break;
+            }
+            if (dataVeiw != null)
+            {
+                foreach (DataGridViewRow row in dataVeiw.Rows)
+                {
+                    if (row.Selected && row.Cells[2].Value != null)
+                    {
+                        FileInfo fileInfo = row.Tag as FileInfo;
+                        DirectoryInfo dirInfo = row.Tag as DirectoryInfo;
+                        if (fileInfo != null)
+                        {
+                            try
+                            {
+                                fileInfo.Delete();
+                                dataVeiw.Rows.Remove(row);
+                            }
+                            catch
+                            {
+                                MessageBox.Show($"Не удалось удалить файл {fileInfo.FullName}", "Ошибка");
+                            }
+                        }
+                        else if (dirInfo != null)
+                        {
+                            try
+                            {
+                                dirInfo.Delete();
+                                dataVeiw.Rows.Remove(row);
+                            }
+                            catch
+                            {
+                                MessageBox.Show($"Не удалось удалить папку {dirInfo.FullName}","Ошибка");
+                            }
+                        }
+                    }
+                }
             }
         }
     }
