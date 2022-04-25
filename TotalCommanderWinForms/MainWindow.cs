@@ -25,8 +25,8 @@ namespace TotalCommanderWinForms
         {
             side = WindowSide.Left;
             InitializeComponent();
-            leftDataView.Click += new EventHandler((sender,e) => {side = WindowSide.Left;});
-            rightDataView.Click += new EventHandler((sender, e) => {side = WindowSide.Right;});
+            leftDataView.Click += new EventHandler((sender, e) => { side = WindowSide.Left; });
+            rightDataView.Click += new EventHandler((sender, e) => { side = WindowSide.Right; });
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
@@ -219,6 +219,7 @@ namespace TotalCommanderWinForms
                 try
                 {
                     Directory.Move(info.FullName, $"{info.Parent.FullName}\\{editedText}");
+                    dataView.Rows[e.RowIndex].Tag = new DirectoryInfo($"{info.Parent.FullName}\\{editedText}");
                 }
                 catch (Exception ex)
                 {
@@ -229,24 +230,26 @@ namespace TotalCommanderWinForms
             else
             {
                 FileInfo info = rowTag as FileInfo;
-                if (info.Name.Equals(editedText))
+                string fileNameNoExt = Path.GetFileNameWithoutExtension(info.Name);
+                if (fileNameNoExt.Equals(editedText))
                 {
                     return;
                 }
                 if (File.Exists($"{info.Directory.FullName}\\{editedText}{info.Extension}"))
                 {
                     MessageBox.Show("Такой файл уже существует", "Ошибка");
-                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = Path.GetFileNameWithoutExtension(info.Name);
+                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = fileNameNoExt;
                     return;
                 }
                 try
                 {
                     File.Move(info.FullName, $"{info.Directory.FullName}\\{editedText}{info.Extension}");
+                    dataView.Rows[e.RowIndex].Tag = new FileInfo($"{info.Directory.FullName}\\{editedText}{info.Extension}");
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Ошибка переименования директории", "Ошибка");
-                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = Path.GetFileNameWithoutExtension(info.Name);
+                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = fileNameNoExt;
                 }
             }
         }
@@ -254,7 +257,7 @@ namespace TotalCommanderWinForms
         public void CopyToClipboard()
         {
             DataGridViewRowCollection rowCollection = null;
-            switch(side)
+            switch (side)
             {
                 case WindowSide.Left:
                     rowCollection = leftDataView.Rows;
@@ -286,14 +289,76 @@ namespace TotalCommanderWinForms
             }
         }
 
-        public void InsertFromClipBoard()
+        public void InsertFromClipboard()
         {
-            
+            DataGridView dataVeiw = null;
+            switch (side)
+            {
+                case WindowSide.Left:
+                    dataVeiw = leftDataView;
+                    break;
+                case WindowSide.Right:
+                    dataVeiw = rightDataView;
+                    break;
+            }
+            if (dataVeiw != null)
+            {
+                StringCollection CopyCollection = Clipboard.GetFileDropList();
+                DirectoryInfo currentDirectory = dataVeiw.Tag as DirectoryInfo;
+                foreach (string path in CopyCollection)
+                {
+                    if (File.GetAttributes(path).HasFlag(FileAttributes.Directory))
+                    {
+                        try
+                        {
+                            CopyDirectory(new DirectoryInfo(path), currentDirectory);
+                        }
+                        catch
+                        {
+                            MessageBox.Show($"Путь {path} невозможно скопировать или он был скопирован неполностью");
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        FileInfo info = new FileInfo(path);
+                        info.CopyTo($"{currentDirectory.FullName}\\{info.Name}");
+                    }
+                }
+                if (CopyCollection.Count > 0)
+                {
+                    LoadFilesFromDirectory(currentDirectory, dataVeiw);
+                }
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             CopyToClipboard();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            InsertFromClipboard();
+        }
+
+        public static void CopyDirectory(DirectoryInfo source, DirectoryInfo target)
+        {
+            Directory.CreateDirectory(target.FullName);
+
+            // Copy each file into the new directory.
+            foreach (FileInfo fi in source.GetFiles())
+            {
+                fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
+            }
+
+            // Copy each subdirectory using recursion.
+            foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
+            {
+                DirectoryInfo nextTargetSubDir =
+                    target.CreateSubdirectory(diSourceSubDir.Name);
+                CopyDirectory(diSourceSubDir, nextTargetSubDir);
+            }
         }
     }
 
