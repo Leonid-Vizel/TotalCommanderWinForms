@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.MainSplitContainer = new System.Windows.Forms.SplitContainer();
             this.leftDataView = new System.Windows.Forms.DataGridView();
             this.leftImgColumn = new System.Windows.Forms.DataGridViewImageColumn();
@@ -60,9 +60,9 @@
             this.командыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel3 = new System.Windows.Forms.Panel();
             this.button1 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.transferBtn = new System.Windows.Forms.Button();
+            this.copyBtn = new System.Windows.Forms.Button();
+            this.pasteBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).BeginInit();
             this.MainSplitContainer.Panel1.SuspendLayout();
             this.MainSplitContainer.Panel2.SuspendLayout();
@@ -127,9 +127,9 @@
             // leftImgColumn
             // 
             this.leftImgColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle11.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle11.NullValue")));
-            this.leftImgColumn.DefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle3.NullValue")));
+            this.leftImgColumn.DefaultCellStyle = dataGridViewCellStyle3;
             this.leftImgColumn.FillWeight = 60.9137F;
             this.leftImgColumn.HeaderText = "Img";
             this.leftImgColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
@@ -245,9 +245,9 @@
             // dataGridViewImageColumn1
             // 
             this.dataGridViewImageColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle12.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle12.NullValue")));
-            this.dataGridViewImageColumn1.DefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle4.NullValue")));
+            this.dataGridViewImageColumn1.DefaultCellStyle = dataGridViewCellStyle4;
             this.dataGridViewImageColumn1.FillWeight = 60.9137F;
             this.dataGridViewImageColumn1.HeaderText = "Img";
             this.dataGridViewImageColumn1.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
@@ -366,9 +366,9 @@
             // panel3
             // 
             this.panel3.Controls.Add(this.button1);
-            this.panel3.Controls.Add(this.button5);
-            this.panel3.Controls.Add(this.button3);
-            this.panel3.Controls.Add(this.button2);
+            this.panel3.Controls.Add(this.transferBtn);
+            this.panel3.Controls.Add(this.copyBtn);
+            this.panel3.Controls.Add(this.pasteBtn);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel3.Location = new System.Drawing.Point(0, 427);
             this.panel3.Name = "panel3";
@@ -383,37 +383,37 @@
             this.button1.TabIndex = 9;
             this.button1.Text = "Удаление";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.OnDeleteClick);
             // 
-            // button5
+            // transferBtn
             // 
-            this.button5.Location = new System.Drawing.Point(91, 0);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(82, 23);
-            this.button5.TabIndex = 8;
-            this.button5.Text = "Перенести";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.transferBtn.Location = new System.Drawing.Point(91, 0);
+            this.transferBtn.Name = "transferBtn";
+            this.transferBtn.Size = new System.Drawing.Size(82, 23);
+            this.transferBtn.TabIndex = 8;
+            this.transferBtn.Text = "Перенести";
+            this.transferBtn.UseVisualStyleBackColor = true;
+            this.transferBtn.Click += new System.EventHandler(this.OnTransferClick);
             // 
-            // button3
+            // copyBtn
             // 
-            this.button3.Location = new System.Drawing.Point(3, 0);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(82, 23);
-            this.button3.TabIndex = 7;
-            this.button3.Text = "Копировать";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.copyBtn.Location = new System.Drawing.Point(3, 0);
+            this.copyBtn.Name = "copyBtn";
+            this.copyBtn.Size = new System.Drawing.Size(82, 23);
+            this.copyBtn.TabIndex = 7;
+            this.copyBtn.Text = "Копировать";
+            this.copyBtn.UseVisualStyleBackColor = true;
+            this.copyBtn.Click += new System.EventHandler(this.OnCopyClick);
             // 
-            // button2
+            // pasteBtn
             // 
-            this.button2.Location = new System.Drawing.Point(179, 0);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(82, 23);
-            this.button2.TabIndex = 6;
-            this.button2.Text = "Вставить";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.pasteBtn.Location = new System.Drawing.Point(179, 0);
+            this.pasteBtn.Name = "pasteBtn";
+            this.pasteBtn.Size = new System.Drawing.Size(82, 23);
+            this.pasteBtn.TabIndex = 6;
+            this.pasteBtn.Text = "Вставить";
+            this.pasteBtn.UseVisualStyleBackColor = true;
+            this.pasteBtn.Click += new System.EventHandler(this.OnPasteClick);
             // 
             // MainWindow
             // 
@@ -475,8 +475,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button transferBtn;
+        private System.Windows.Forms.Button copyBtn;
+        private System.Windows.Forms.Button pasteBtn;
     }
 }

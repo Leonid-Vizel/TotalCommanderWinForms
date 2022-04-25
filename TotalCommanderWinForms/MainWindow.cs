@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Drawing;
@@ -358,12 +359,99 @@ namespace TotalCommanderWinForms
             }
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void OnTransferClick(object sender, EventArgs e)
         {
-
+            DataGridView dataVeiwSender = null;
+            DataGridView dataVeiwReceiver = null;
+            switch (side)
+            {
+                case WindowSide.Left:
+                    dataVeiwSender = leftDataView;
+                    dataVeiwReceiver = rightDataView;
+                    break;
+                case WindowSide.Right:
+                    dataVeiwSender = rightDataView;
+                    dataVeiwReceiver = leftDataView;
+                    break;
+            }
+            if (dataVeiwSender != null && dataVeiwReceiver != null)
+            {
+                DirectoryInfo receiverDirectory = dataVeiwReceiver.Tag as DirectoryInfo;
+                List<DataGridViewRow> rowsToDelete = new List<DataGridViewRow>();
+                foreach (DataGridViewRow row in dataVeiwSender.Rows)
+                {
+                    if (row.Selected && row.Cells[2].Value != null)
+                    {
+                        FileInfo fileInfo = row.Tag as FileInfo;
+                        DirectoryInfo dirInfo = row.Tag as DirectoryInfo;
+                        if (fileInfo != null)
+                        {
+                            FileInfo info = null;
+                            try
+                            {
+                                if (receiverDirectory.FullName.EndsWith("\\"))
+                                {
+                                    //Заначит это диск
+                                    fileInfo.MoveTo($"{receiverDirectory.FullName}{fileInfo.Name}");
+                                    info = new FileInfo($"{receiverDirectory.FullName}{fileInfo.Name}");
+                                }
+                                else
+                                {
+                                    //Значит это директория
+                                    fileInfo.MoveTo($"{receiverDirectory.FullName}\\{fileInfo.Name}");
+                                    info = new FileInfo($"{receiverDirectory.FullName}\\{fileInfo.Name}");
+                                }
+                            }
+                            catch
+                            {
+                                MessageBox.Show($"Ошибка копирования файла {fileInfo.FullName}", "Ошибка");
+                                continue;
+                            }
+                            DataGridViewRow newRow = new DataGridViewRow();
+                            newRow.CreateCells(dataVeiwReceiver);
+                            newRow.Tag = info;
+                            newRow.SetValues(new object[6] { Icon.ExtractAssociatedIcon(info.FullName), Path.GetFileNameWithoutExtension(info.Name), info.Extension, info.Length, info.LastWriteTime.ToString(dateFormat), info.Attributes });
+                            dataVeiwReceiver.Rows.Add(newRow);
+                            rowsToDelete.Add(row);
+                        }
+                        else if (dirInfo != null)
+                        {
+                            if (dirInfo.FullName.Equals(receiverDirectory.FullName))
+                            {
+                                MessageBox.Show("Невозможно копировать папку саму в себя", "Ошибка");
+                                return;
+                            }
+                            if (!receiverDirectory.GetDirectories().Select(x => x.FullName).Any(x => x.Equals(dirInfo.FullName)))
+                            {
+                                try
+                                {
+                                    dirInfo.MoveTo(receiverDirectory.FullName);
+                                }
+                                catch
+                                {
+                                    MessageBox.Show($"Ошибка копирования файла {fileInfo.FullName}", "Ошибка");
+                                    continue;
+                                }
+                                DirectoryInfo info = new DirectoryInfo($"{receiverDirectory}\\{dirInfo.Name}");
+                                DataGridViewRow newRow = new DataGridViewRow();
+                                newRow.CreateCells(dataVeiwReceiver);
+                                newRow.Tag = info;
+                                newRow.SetValues(new object[6] { DefaultIcons.Folder, info.Name, "<DIR>", "<DIR>", info.LastWriteTime.ToString(dateFormat), info.Attributes });
+                                dataVeiwReceiver.Rows.Add(newRow);
+                                rowsToDelete.Add(row);
+                            }
+                            else
+                            {
+                                MessageBox.Show($"Папка с именем '{dirInfo.Name}' уже существует в '{receiverDirectory.FullName}'", "Ошибка");
+                            }
+                        }
+                    }
+                }
+                rowsToDelete.ForEach(x=> dataVeiwSender.Rows.Remove(x));
+            }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void OnCopyClick(object sender, EventArgs e)
         {
             DataGridView dataVeiwSender = null;
             DataGridView dataVeiwReceiver = null;
@@ -389,14 +477,32 @@ namespace TotalCommanderWinForms
                         DirectoryInfo dirInfo = row.Tag as DirectoryInfo;
                         if (fileInfo != null)
                         {
+                            FileInfo info = null;
                             try
                             {
-                                fileInfo.CopyTo(receiverDirectory.FullName);
+                                if (receiverDirectory.FullName.EndsWith("\\"))
+                                {
+                                    //Заначит это диск
+                                    fileInfo.CopyTo($"{receiverDirectory.FullName}{fileInfo.Name}");
+                                    info = new FileInfo($"{receiverDirectory.FullName}{fileInfo.Name}");
+                                }
+                                else
+                                {
+                                    //Значит это директория
+                                    fileInfo.CopyTo($"{receiverDirectory.FullName}\\{fileInfo.Name}");
+                                    info = new FileInfo($"{receiverDirectory.FullName}\\{fileInfo.Name}");
+                                }
                             }
-                            catch
+                            catch (Exception ex)
                             {
-                                MessageBox.Show($"Ошибка копирования файла {fileInfo.FullName}","Ошибка");
+                                MessageBox.Show($"Ошибка копирования файла {fileInfo.FullName}\n{ex.Message}", "Ошибка");
+                                continue;
                             }
+                            DataGridViewRow newRow = new DataGridViewRow();
+                            newRow.CreateCells(dataVeiwReceiver);
+                            newRow.Tag = info;
+                            newRow.SetValues(new object[6] { Icon.ExtractAssociatedIcon(info.FullName), Path.GetFileNameWithoutExtension(info.Name), info.Extension, info.Length, info.LastWriteTime.ToString(dateFormat), info.Attributes });
+                            dataVeiwReceiver.Rows.Add(newRow);
                         }
                         else if (dirInfo != null)
                         {
@@ -433,12 +539,12 @@ namespace TotalCommanderWinForms
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void OnPasteClick(object sender, EventArgs e)
         {
             InsertFromClipboard();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void OnDeleteClick(object sender, EventArgs e)
         {
             DataGridView dataVeiw = null;
             switch (side)
@@ -452,6 +558,7 @@ namespace TotalCommanderWinForms
             }
             if (dataVeiw != null)
             {
+                List<DataGridViewRow> rowsToDelete = new List<DataGridViewRow>();
                 foreach (DataGridViewRow row in dataVeiw.Rows)
                 {
                     if (row.Selected && row.Cells[2].Value != null)
@@ -463,7 +570,7 @@ namespace TotalCommanderWinForms
                             try
                             {
                                 fileInfo.Delete();
-                                dataVeiw.Rows.Remove(row);
+                                rowsToDelete.Add(row);
                             }
                             catch
                             {
@@ -475,7 +582,7 @@ namespace TotalCommanderWinForms
                             try
                             {
                                 dirInfo.Delete();
-                                dataVeiw.Rows.Remove(row);
+                                rowsToDelete.Add(row);
                             }
                             catch
                             {
@@ -484,6 +591,7 @@ namespace TotalCommanderWinForms
                         }
                     }
                 }
+                rowsToDelete.ForEach(x => dataVeiw.Rows.Remove(x));
             }
         }
     }
