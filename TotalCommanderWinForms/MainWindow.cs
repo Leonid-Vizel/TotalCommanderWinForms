@@ -48,7 +48,7 @@ namespace TotalCommanderWinForms
                 DataGridViewRow row = new DataGridViewRow();
                 row.CreateCells(gridView);
                 row.Tag = info;
-                row.SetValues(new object[6] { DefaultIcons.Folder, info.Name, "<DIR>", "<DIR>", info.LastWriteTime.ToString(dateFormat), info.Attributes });
+                row.SetValues(new object[6] { DefaultIcons.Folder, info.Name, "<DIR>", (long)0, info.LastWriteTime.ToString(dateFormat), info.Attributes });
                 gridView.Rows.Add(row);
             }
 
@@ -103,7 +103,7 @@ namespace TotalCommanderWinForms
                 DataGridViewRow row = new DataGridViewRow();
                 row.CreateCells(gridView);
                 row.Tag = info;
-                row.SetValues(new object[6] { DefaultIcons.Folder, info.Name, "<DIR>", "<DIR>", info.LastWriteTime.ToString(dateFormat), info.Attributes });
+                row.SetValues(new object[6] { DefaultIcons.Folder, info.Name, "<DIR>", (long)0, info.LastWriteTime.ToString(dateFormat), info.Attributes });
                 gridView.Rows.Add(row);
             }
 
@@ -147,6 +147,10 @@ namespace TotalCommanderWinForms
 
         private void OnCellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex == -1)
+            {
+                return;
+            }
             DataGridView dataView = sender as DataGridView;
             if (dataView == null)
             {
@@ -436,7 +440,7 @@ namespace TotalCommanderWinForms
                                 DataGridViewRow newRow = new DataGridViewRow();
                                 newRow.CreateCells(dataVeiwReceiver);
                                 newRow.Tag = info;
-                                newRow.SetValues(new object[6] { DefaultIcons.Folder, info.Name, "<DIR>", "<DIR>", info.LastWriteTime.ToString(dateFormat), info.Attributes });
+                                newRow.SetValues(new object[6] { DefaultIcons.Folder, info.Name, "<DIR>", (long)0, info.LastWriteTime.ToString(dateFormat), info.Attributes });
                                 dataVeiwReceiver.Rows.Add(newRow);
                                 rowsToDelete.Add(row);
                             }
@@ -526,7 +530,7 @@ namespace TotalCommanderWinForms
                                 DataGridViewRow newRow = new DataGridViewRow();
                                 newRow.CreateCells(dataVeiwReceiver);
                                 newRow.Tag = info;
-                                newRow.SetValues(new object[6] { DefaultIcons.Folder, info.Name, "<DIR>", "<DIR>", info.LastWriteTime.ToString(dateFormat), info.Attributes });
+                                newRow.SetValues(new object[6] { DefaultIcons.Folder, info.Name, "<DIR>", (long)0, info.LastWriteTime.ToString(dateFormat), info.Attributes });
                                 dataVeiwReceiver.Rows.Add(newRow);
                             }
                             else
