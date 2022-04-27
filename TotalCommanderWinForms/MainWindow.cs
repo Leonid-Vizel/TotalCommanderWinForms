@@ -252,7 +252,7 @@ namespace TotalCommanderWinForms
                     Directory.Move(info.FullName, $"{info.Parent.FullName}\\{editedText}");
                     dataView.Rows[e.RowIndex].Tag = new DirectoryInfo($"{info.Parent.FullName}\\{editedText}");
                 }
-                catch (Exception ex)
+                catch
                 {
                     MessageBox.Show("Ошибка переименования директории", "Ошибка");
                     dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = info.Name;
@@ -277,7 +277,7 @@ namespace TotalCommanderWinForms
                     File.Move(info.FullName, $"{info.Directory.FullName}\\{editedText}{info.Extension}");
                     dataView.Rows[e.RowIndex].Tag = new FileInfo($"{info.Directory.FullName}\\{editedText}{info.Extension}");
                 }
-                catch (Exception ex)
+                catch
                 {
                     MessageBox.Show("Ошибка переименования директории", "Ошибка");
                     dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = fileNameNoExt;
