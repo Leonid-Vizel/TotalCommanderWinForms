@@ -1,6 +1,6 @@
 ﻿namespace TotalCommanderWinForms
 {
-    partial class AskNameForm
+    partial class AskDirectoryNameForm
     {
         /// <summary>
         /// Required designer variable.

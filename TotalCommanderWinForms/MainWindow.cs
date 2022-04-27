@@ -16,6 +16,7 @@ namespace TotalCommanderWinForms
         private static string dateFormat;
         private WindowSide side;
         private Button[] lowerButtons;
+
         static MainWindow()
         {
             prohibitedSymbols = "\\|/*:?\"<>";
@@ -64,6 +65,14 @@ namespace TotalCommanderWinForms
                 gridView.Rows.Add(row);
             }
             gridView.Tag = new DirectoryInfo(currentDrive.Name);
+            if (gridView == leftDataView)
+            {
+                leftPathInfo.Text = $"Путь: {currentDrive.Name}";
+            }
+            else if (gridView == rightDataView)
+            {
+                rightPathInfo.Text = $"Путь: {currentDrive.Name}";
+            }
         }
 
         private void LoadFilesFromDirectory(DirectoryInfo currentDirectory, DataGridView gridView)
@@ -119,6 +128,14 @@ namespace TotalCommanderWinForms
                 gridView.Rows.Add(row);
             }
             gridView.Tag = currentDirectory;
+            if (gridView == leftDataView)
+            {
+                leftPathInfo.Text = $"Путь: {currentDirectory.FullName}";
+            }
+            else if (gridView == rightDataView)
+            {
+                rightPathInfo.Text = $"Путь: {currentDirectory.FullName}";
+            }
         }
 
         private void leftDiskDropDown_SelectedIndexChanged(object sender, EventArgs e)
@@ -627,7 +644,7 @@ namespace TotalCommanderWinForms
                 {
                     return;
                 }
-                AskNameForm askForm = new AskNameForm(prohibitedSymbols);
+                AskDirectoryNameForm askForm = new AskDirectoryNameForm(prohibitedSymbols);
                 if (askForm.ShowDialog() == DialogResult.OK)
                 {
                     if (info.FullName.EndsWith("\\"))
@@ -687,7 +704,7 @@ namespace TotalCommanderWinForms
             int applyingBtnWidth = lowerPanel.Width / 5;
             for (int i = 0; i < lowerButtons.Length; i++)
             {
-                lowerButtons[i].Location = new Point(i * applyingBtnWidth + 1, lowerButtons[i].Location.Y);
+                lowerButtons[i].Location = new Point(i * applyingBtnWidth, lowerButtons[i].Location.Y);
                 lowerButtons[i].Size = new Size(applyingBtnWidth, lowerButtons[i].Size.Height);
             }
         }

@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.MainSplitContainer = new System.Windows.Forms.SplitContainer();
             this.leftDataView = new System.Windows.Forms.DataGridView();
             this.leftImgColumn = new System.Windows.Forms.DataGridViewImageColumn();
@@ -55,10 +55,6 @@
             this.rightDiskSpaceInfo = new System.Windows.Forms.Label();
             this.rightDiskDropDown = new System.Windows.Forms.ComboBox();
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
-            this.FilesToolStrip = new System.Windows.Forms.ToolStripMenuItem();
-            this.archiveBtn = new System.Windows.Forms.ToolStripMenuItem();
-            this.dearchiveBtn = new System.Windows.Forms.ToolStripMenuItem();
-            this.fileMenuSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.СommandsToolStrip = new System.Windows.Forms.ToolStripMenuItem();
             this.swapBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.equalizeBtn = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,7 +65,6 @@
             this.transferBtn = new System.Windows.Forms.Button();
             this.copyBtn = new System.Windows.Forms.Button();
             this.pasteBtn = new System.Windows.Forms.Button();
-            this.exitBtn = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).BeginInit();
             this.MainSplitContainer.Panel1.SuspendLayout();
             this.MainSplitContainer.Panel2.SuspendLayout();
@@ -134,9 +129,9 @@
             // leftImgColumn
             // 
             this.leftImgColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle1.NullValue")));
-            this.leftImgColumn.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle7.NullValue")));
+            this.leftImgColumn.DefaultCellStyle = dataGridViewCellStyle7;
             this.leftImgColumn.FillWeight = 60.9137F;
             this.leftImgColumn.HeaderText = "Img";
             this.leftImgColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
@@ -187,7 +182,7 @@
             this.leftPathInfo.Name = "leftPathInfo";
             this.leftPathInfo.Size = new System.Drawing.Size(354, 21);
             this.leftPathInfo.TabIndex = 2;
-            this.leftPathInfo.Text = "Path";
+            this.leftPathInfo.Text = "Путь: ";
             this.leftPathInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // panel1
@@ -252,9 +247,9 @@
             // rightImgColumn
             // 
             this.rightImgColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle2.NullValue")));
-            this.rightImgColumn.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle8.NullValue")));
+            this.rightImgColumn.DefaultCellStyle = dataGridViewCellStyle8;
             this.rightImgColumn.FillWeight = 60.9137F;
             this.rightImgColumn.HeaderText = "Img";
             this.rightImgColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
@@ -305,7 +300,7 @@
             this.rightPathInfo.Name = "rightPathInfo";
             this.rightPathInfo.Size = new System.Drawing.Size(434, 21);
             this.rightPathInfo.TabIndex = 5;
-            this.rightPathInfo.Text = "Path";
+            this.rightPathInfo.Text = "Путь: ";
             this.rightPathInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // panel2
@@ -343,41 +338,12 @@
             // mainMenuStrip
             // 
             this.mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.FilesToolStrip,
             this.СommandsToolStrip});
             this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.mainMenuStrip.Name = "mainMenuStrip";
             this.mainMenuStrip.Size = new System.Drawing.Size(800, 24);
             this.mainMenuStrip.TabIndex = 2;
             this.mainMenuStrip.Text = "menuStrip1";
-            // 
-            // FilesToolStrip
-            // 
-            this.FilesToolStrip.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.archiveBtn,
-            this.dearchiveBtn,
-            this.fileMenuSeparator,
-            this.exitBtn});
-            this.FilesToolStrip.Name = "FilesToolStrip";
-            this.FilesToolStrip.Size = new System.Drawing.Size(57, 20);
-            this.FilesToolStrip.Text = "Файлы";
-            // 
-            // archiveBtn
-            // 
-            this.archiveBtn.Name = "archiveBtn";
-            this.archiveBtn.Size = new System.Drawing.Size(180, 22);
-            this.archiveBtn.Text = "Заархивировать";
-            // 
-            // dearchiveBtn
-            // 
-            this.dearchiveBtn.Name = "dearchiveBtn";
-            this.dearchiveBtn.Size = new System.Drawing.Size(180, 22);
-            this.dearchiveBtn.Text = "Разархивировать";
-            // 
-            // fileMenuSeparator
-            // 
-            this.fileMenuSeparator.Name = "fileMenuSeparator";
-            this.fileMenuSeparator.Size = new System.Drawing.Size(177, 6);
             // 
             // СommandsToolStrip
             // 
@@ -489,13 +455,6 @@
             this.pasteBtn.UseVisualStyleBackColor = false;
             this.pasteBtn.Click += new System.EventHandler(this.OnPasteClick);
             // 
-            // exitBtn
-            // 
-            this.exitBtn.Name = "exitBtn";
-            this.exitBtn.Size = new System.Drawing.Size(180, 22);
-            this.exitBtn.Text = "Выход";
-            this.exitBtn.Click += new System.EventHandler(this.OnExitBtnClick);
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -529,7 +488,6 @@
         #endregion
         private System.Windows.Forms.SplitContainer MainSplitContainer;
         private System.Windows.Forms.MenuStrip mainMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem FilesToolStrip;
         private System.Windows.Forms.ToolStripMenuItem СommandsToolStrip;
         private System.Windows.Forms.DataGridView leftDataView;
         private System.Windows.Forms.Label leftPathInfo;
@@ -562,9 +520,5 @@
         private System.Windows.Forms.ToolStripMenuItem swapBtn;
         private System.Windows.Forms.ToolStripMenuItem equalizeBtn;
         private System.Windows.Forms.ToolStripMenuItem backBtn;
-        private System.Windows.Forms.ToolStripMenuItem archiveBtn;
-        private System.Windows.Forms.ToolStripMenuItem dearchiveBtn;
-        private System.Windows.Forms.ToolStripSeparator fileMenuSeparator;
-        private System.Windows.Forms.ToolStripMenuItem exitBtn;
     }
 }

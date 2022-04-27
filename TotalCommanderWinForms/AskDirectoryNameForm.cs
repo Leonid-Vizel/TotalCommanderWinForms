@@ -10,11 +10,11 @@ using System.Windows.Forms;
 
 namespace TotalCommanderWinForms
 {
-    public partial class AskNameForm : Form
+    public partial class AskDirectoryNameForm : Form
     {
         public string Result { get; private set; } = null;
         private string prohibited;
-        public AskNameForm(string prohibited)
+        public AskDirectoryNameForm(string prohibited)
         {
             this.prohibited = prohibited;
             InitializeComponent();
