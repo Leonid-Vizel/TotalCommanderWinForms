@@ -15,7 +15,7 @@ namespace TotalCommanderWinForms
         private static string prohibitedSymbols;
         private static string dateFormat;
         private WindowSide side;
-
+        private Button[] lowerButtons;
         static MainWindow()
         {
             prohibitedSymbols = "\\|/*:?\"<>";
@@ -26,6 +26,7 @@ namespace TotalCommanderWinForms
         {
             side = WindowSide.Left;
             InitializeComponent();
+            lowerButtons = new Button[5] { copyBtn, transferBtn, pasteBtn, deleteBtn, createDirBtn };
             leftDataView.Click += new EventHandler((sender, e) => { side = WindowSide.Left; });
             rightDataView.Click += new EventHandler((sender, e) => { side = WindowSide.Right; });
         }
@@ -38,6 +39,7 @@ namespace TotalCommanderWinForms
                 rightDiskDropDown.Items.Add(info);
             }
             leftDiskDropDown.SelectedIndex = rightDiskDropDown.SelectedIndex = 0;
+            OnLowerPanelSizeChanged(null, null);
         }
 
         private void LoadFilesFromDisk(DriveInfo currentDrive, DataGridView gridView)
@@ -116,6 +118,7 @@ namespace TotalCommanderWinForms
                 row.SetValues(new object[6] { Icon.ExtractAssociatedIcon(info.FullName), Path.GetFileNameWithoutExtension(info.Name), info.Extension, info.Length, info.LastWriteTime.ToString(dateFormat), info.Attributes });
                 gridView.Rows.Add(row);
             }
+            gridView.Tag = currentDirectory;
         }
 
         private void leftDiskDropDown_SelectedIndexChanged(object sender, EventArgs e)
@@ -173,11 +176,17 @@ namespace TotalCommanderWinForms
                         row.Selected = rowDirectoryInfo != null && rowDirectoryInfo.FullName.Equals(viewInfo.FullName);
                     }
                 }
-                dataView.Tag = rowTag;
             }
             else
             {
-                Process.Start((rowTag as FileInfo).FullName);
+                try
+                {
+                    Process.Start((rowTag as FileInfo).FullName);
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show($"Ошибка запуска файла: \n{exception}", "Ошибка запуска");
+                }
             }
         }
 
@@ -341,7 +350,7 @@ namespace TotalCommanderWinForms
         {
             if (target.FullName.EndsWith("\\"))
             {
-                 Directory.CreateDirectory($"{target.FullName}{source.Name}");
+                Directory.CreateDirectory($"{target.FullName}{source.Name}");
             }
             else
             {
@@ -451,7 +460,7 @@ namespace TotalCommanderWinForms
                         }
                     }
                 }
-                rowsToDelete.ForEach(x=> dataVeiwSender.Rows.Remove(x));
+                rowsToDelete.ForEach(x => dataVeiwSender.Rows.Remove(x));
             }
         }
 
@@ -512,10 +521,10 @@ namespace TotalCommanderWinForms
                         {
                             if (dirInfo.FullName.Equals(receiverDirectory.FullName))
                             {
-                                MessageBox.Show("Невозможно копировать папку саму в себя","Ошибка");
+                                MessageBox.Show("Невозможно копировать папку саму в себя", "Ошибка");
                                 return;
                             }
-                            if (!receiverDirectory.GetDirectories().Select(x=>x.FullName).Any(x=>x.Equals(dirInfo.FullName)))
+                            if (!receiverDirectory.GetDirectories().Select(x => x.FullName).Any(x => x.Equals(dirInfo.FullName)))
                             {
                                 try
                                 {
@@ -535,7 +544,7 @@ namespace TotalCommanderWinForms
                             }
                             else
                             {
-                                MessageBox.Show($"Папка с именем '{dirInfo.Name}' уже существует в '{receiverDirectory.FullName}'","Ошибка");
+                                MessageBox.Show($"Папка с именем '{dirInfo.Name}' уже существует в '{receiverDirectory.FullName}'", "Ошибка");
                             }
                         }
                     }
@@ -590,12 +599,149 @@ namespace TotalCommanderWinForms
                             }
                             catch
                             {
-                                MessageBox.Show($"Не удалось удалить папку {dirInfo.FullName}","Ошибка");
+                                MessageBox.Show($"Не удалось удалить папку {dirInfo.FullName}", "Ошибка");
                             }
                         }
                     }
                 }
                 rowsToDelete.ForEach(x => dataVeiw.Rows.Remove(x));
+            }
+        }
+
+        private void OnCreateDirClick(object sender, EventArgs e)
+        {
+            DataGridView dataVeiw = null;
+            switch (side)
+            {
+                case WindowSide.Left:
+                    dataVeiw = leftDataView;
+                    break;
+                case WindowSide.Right:
+                    dataVeiw = rightDataView;
+                    break;
+            }
+            if (dataVeiw != null)
+            {
+                DirectoryInfo info = dataVeiw.Tag as DirectoryInfo;
+                if (info == null)
+                {
+                    return;
+                }
+                AskNameForm askForm = new AskNameForm(prohibitedSymbols);
+                if (askForm.ShowDialog() == DialogResult.OK)
+                {
+                    if (info.FullName.EndsWith("\\"))
+                    {
+                        //Значит это диск
+                        if (Directory.Exists($"{info.FullName}{askForm.Result}"))
+                        {
+                            MessageBox.Show("Папка с таким названием уже существует!", "Ошибка");
+                            return;
+                        }
+                        DataGridViewRow row = new DataGridViewRow();
+                        DirectoryInfo newDirInfo = null;
+                        try
+                        {
+                            newDirInfo = Directory.CreateDirectory($"{info.FullName}{askForm.Result}");
+                        }
+                        catch
+                        {
+                            MessageBox.Show("Ошибка создания папки!", "Ошибка");
+                            return;
+                        }
+                        row.Tag = newDirInfo;
+                        row.CreateCells(dataVeiw);
+                        row.SetValues(new object[6] { DefaultIcons.Folder, newDirInfo.Name, "<DIR>", (long)0, newDirInfo.LastWriteTime.ToString(dateFormat), newDirInfo.Attributes });
+                        dataVeiw.Rows.Add(row);
+                    }
+                    else
+                    {
+                        //Значит это папка
+                        if (Directory.Exists($"{info.FullName}\\{askForm.Result}"))
+                        {
+                            MessageBox.Show("Папка с таким названием уже существует!", "Ошибка");
+                            return;
+                        }
+                        DataGridViewRow row = new DataGridViewRow();
+                        DirectoryInfo newDirInfo = null;
+                        try
+                        {
+                            newDirInfo = Directory.CreateDirectory($"{info.FullName}\\{askForm.Result}");
+                        }
+                        catch
+                        {
+                            MessageBox.Show("Ошибка создания папки!", "Ошибка");
+                            return;
+                        }
+                        row.Tag = newDirInfo;
+                        row.CreateCells(dataVeiw);
+                        row.SetValues(new object[6] { DefaultIcons.Folder, newDirInfo.Name, "<DIR>", (long)0, newDirInfo.LastWriteTime.ToString(dateFormat), newDirInfo.Attributes });
+                        dataVeiw.Rows.Add(row);
+                    }
+                }
+            }
+        }
+
+        private void OnLowerPanelSizeChanged(object sender, EventArgs e)
+        {
+            int applyingBtnWidth = lowerPanel.Width / 5;
+            for (int i = 0; i < lowerButtons.Length; i++)
+            {
+                lowerButtons[i].Location = new Point(i * applyingBtnWidth + 1, lowerButtons[i].Location.Y);
+                lowerButtons[i].Size = new Size(applyingBtnWidth, lowerButtons[i].Size.Height);
+            }
+        }
+
+        private void OnSwapBtnClick(object sender, EventArgs e)
+        {
+            DataGridView dataVeiwSender = null;
+            DataGridView dataVeiwReceiver = null;
+            switch (side)
+            {
+                case WindowSide.Left:
+                    dataVeiwSender = leftDataView;
+                    dataVeiwReceiver = rightDataView;
+                    break;
+                case WindowSide.Right:
+                    dataVeiwSender = rightDataView;
+                    dataVeiwReceiver = leftDataView;
+                    break;
+            }
+            if (dataVeiwSender != null && dataVeiwReceiver != null)
+            {
+                DirectoryInfo senderInfo = dataVeiwSender.Tag as DirectoryInfo;
+                DirectoryInfo receiverInfo = dataVeiwReceiver.Tag as DirectoryInfo;
+                if (senderInfo != null && receiverInfo != null && !senderInfo.FullName.Equals(receiverInfo.FullName))
+                {
+                    LoadFilesFromDirectory(senderInfo, dataVeiwReceiver);
+                    LoadFilesFromDirectory(receiverInfo, dataVeiwSender);
+                }
+            }
+        }
+
+        private void OnEqualizeBtnClick(object sender, EventArgs e)
+        {
+            DataGridView dataVeiwSender = null;
+            DataGridView dataVeiwReceiver = null;
+            switch (side)
+            {
+                case WindowSide.Left:
+                    dataVeiwSender = leftDataView;
+                    dataVeiwReceiver = rightDataView;
+                    break;
+                case WindowSide.Right:
+                    dataVeiwSender = rightDataView;
+                    dataVeiwReceiver = leftDataView;
+                    break;
+            }
+            if (dataVeiwSender != null && dataVeiwReceiver != null)
+            {
+                DirectoryInfo senderInfo = dataVeiwSender.Tag as DirectoryInfo;
+                DirectoryInfo receiverInfo = dataVeiwReceiver.Tag as DirectoryInfo;
+                if (senderInfo != null && receiverInfo != null && !senderInfo.FullName.Equals(receiverInfo.FullName))
+                {
+                    LoadFilesFromDirectory(senderInfo, dataVeiwReceiver);
+                }
             }
         }
     }
