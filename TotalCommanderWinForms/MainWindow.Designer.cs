@@ -55,17 +55,21 @@
             this.rightDiskSpaceInfo = new System.Windows.Forms.Label();
             this.rightDiskDropDown = new System.Windows.Forms.ComboBox();
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
-            this.файлыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.выделениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.командыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FilesToolStrip = new System.Windows.Forms.ToolStripMenuItem();
+            this.archiveBtn = new System.Windows.Forms.ToolStripMenuItem();
+            this.dearchiveBtn = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileMenuSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.СommandsToolStrip = new System.Windows.Forms.ToolStripMenuItem();
             this.swapBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.equalizeBtn = new System.Windows.Forms.ToolStripMenuItem();
+            this.backBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.lowerPanel = new System.Windows.Forms.Panel();
             this.createDirBtn = new System.Windows.Forms.Button();
             this.deleteBtn = new System.Windows.Forms.Button();
             this.transferBtn = new System.Windows.Forms.Button();
             this.copyBtn = new System.Windows.Forms.Button();
             this.pasteBtn = new System.Windows.Forms.Button();
+            this.exitBtn = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).BeginInit();
             this.MainSplitContainer.Panel1.SuspendLayout();
             this.MainSplitContainer.Panel2.SuspendLayout();
@@ -339,35 +343,51 @@
             // mainMenuStrip
             // 
             this.mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.файлыToolStripMenuItem,
-            this.выделениеToolStripMenuItem,
-            this.командыToolStripMenuItem});
+            this.FilesToolStrip,
+            this.СommandsToolStrip});
             this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.mainMenuStrip.Name = "mainMenuStrip";
             this.mainMenuStrip.Size = new System.Drawing.Size(800, 24);
             this.mainMenuStrip.TabIndex = 2;
             this.mainMenuStrip.Text = "menuStrip1";
             // 
-            // файлыToolStripMenuItem
+            // FilesToolStrip
             // 
-            this.файлыToolStripMenuItem.Name = "файлыToolStripMenuItem";
-            this.файлыToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
-            this.файлыToolStripMenuItem.Text = "Файлы";
+            this.FilesToolStrip.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.archiveBtn,
+            this.dearchiveBtn,
+            this.fileMenuSeparator,
+            this.exitBtn});
+            this.FilesToolStrip.Name = "FilesToolStrip";
+            this.FilesToolStrip.Size = new System.Drawing.Size(57, 20);
+            this.FilesToolStrip.Text = "Файлы";
             // 
-            // выделениеToolStripMenuItem
+            // archiveBtn
             // 
-            this.выделениеToolStripMenuItem.Name = "выделениеToolStripMenuItem";
-            this.выделениеToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
-            this.выделениеToolStripMenuItem.Text = "Выделение";
+            this.archiveBtn.Name = "archiveBtn";
+            this.archiveBtn.Size = new System.Drawing.Size(180, 22);
+            this.archiveBtn.Text = "Заархивировать";
             // 
-            // командыToolStripMenuItem
+            // dearchiveBtn
             // 
-            this.командыToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.dearchiveBtn.Name = "dearchiveBtn";
+            this.dearchiveBtn.Size = new System.Drawing.Size(180, 22);
+            this.dearchiveBtn.Text = "Разархивировать";
+            // 
+            // fileMenuSeparator
+            // 
+            this.fileMenuSeparator.Name = "fileMenuSeparator";
+            this.fileMenuSeparator.Size = new System.Drawing.Size(177, 6);
+            // 
+            // СommandsToolStrip
+            // 
+            this.СommandsToolStrip.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.swapBtn,
-            this.equalizeBtn});
-            this.командыToolStripMenuItem.Name = "командыToolStripMenuItem";
-            this.командыToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
-            this.командыToolStripMenuItem.Text = "Команды";
+            this.equalizeBtn,
+            this.backBtn});
+            this.СommandsToolStrip.Name = "СommandsToolStrip";
+            this.СommandsToolStrip.Size = new System.Drawing.Size(70, 20);
+            this.СommandsToolStrip.Text = "Команды";
             // 
             // swapBtn
             // 
@@ -382,6 +402,13 @@
             this.equalizeBtn.Size = new System.Drawing.Size(223, 22);
             this.equalizeBtn.Text = "Сравнять панели";
             this.equalizeBtn.Click += new System.EventHandler(this.OnEqualizeBtnClick);
+            // 
+            // backBtn
+            // 
+            this.backBtn.Name = "backBtn";
+            this.backBtn.Size = new System.Drawing.Size(223, 22);
+            this.backBtn.Text = "Назад";
+            this.backBtn.Click += new System.EventHandler(this.OnBackBtnClick);
             // 
             // lowerPanel
             // 
@@ -462,6 +489,13 @@
             this.pasteBtn.UseVisualStyleBackColor = false;
             this.pasteBtn.Click += new System.EventHandler(this.OnPasteClick);
             // 
+            // exitBtn
+            // 
+            this.exitBtn.Name = "exitBtn";
+            this.exitBtn.Size = new System.Drawing.Size(180, 22);
+            this.exitBtn.Text = "Выход";
+            this.exitBtn.Click += new System.EventHandler(this.OnExitBtnClick);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -495,9 +529,8 @@
         #endregion
         private System.Windows.Forms.SplitContainer MainSplitContainer;
         private System.Windows.Forms.MenuStrip mainMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem файлыToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem выделениеToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem командыToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem FilesToolStrip;
+        private System.Windows.Forms.ToolStripMenuItem СommandsToolStrip;
         private System.Windows.Forms.DataGridView leftDataView;
         private System.Windows.Forms.Label leftPathInfo;
         private System.Windows.Forms.Panel panel1;
@@ -528,5 +561,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn rightAttrColumn;
         private System.Windows.Forms.ToolStripMenuItem swapBtn;
         private System.Windows.Forms.ToolStripMenuItem equalizeBtn;
+        private System.Windows.Forms.ToolStripMenuItem backBtn;
+        private System.Windows.Forms.ToolStripMenuItem archiveBtn;
+        private System.Windows.Forms.ToolStripMenuItem dearchiveBtn;
+        private System.Windows.Forms.ToolStripSeparator fileMenuSeparator;
+        private System.Windows.Forms.ToolStripMenuItem exitBtn;
     }
 }

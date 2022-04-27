@@ -744,6 +744,31 @@ namespace TotalCommanderWinForms
                 }
             }
         }
+
+        private void OnBackBtnClick(object sender, EventArgs e)
+        {
+            DataGridView dataVeiw = null;
+            switch (side)
+            {
+                case WindowSide.Left:
+                    dataVeiw = leftDataView;
+                    break;
+                case WindowSide.Right:
+                    dataVeiw = rightDataView;
+                    break;
+            }
+            if (dataVeiw != null)
+            {
+                DirectoryInfo info = dataVeiw.Tag as DirectoryInfo;
+                if (info == null || info.Parent == null)
+                {
+                    return;
+                }
+                LoadFilesFromDirectory(info.Parent, dataVeiw);
+            }
+        }
+
+        private void OnExitBtnClick(object sender, EventArgs e) => Close();
     }
 
     public enum WindowSide
