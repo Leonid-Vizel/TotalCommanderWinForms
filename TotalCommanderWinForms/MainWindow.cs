@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace TotalCommanderWinForms
 {
@@ -16,7 +17,8 @@ namespace TotalCommanderWinForms
         private static string dateFormat;
         private WindowSide side;
         private Button[] lowerButtons;
-
+        private FileSystemWatcher leftFileWatcher;
+        private FileSystemWatcher rightFileWatcher;
         static MainWindow()
         {
             prohibitedSymbols = "\\|/*:?\"<>";
@@ -25,8 +27,29 @@ namespace TotalCommanderWinForms
 
         public MainWindow()
         {
+            leftFileWatcher = new FileSystemWatcher();
+            leftFileWatcher.Renamed += (object sender, RenamedEventArgs e) =>
+            {
+                //Делаю через Action, так как FileSystemWatcher исполняется в другом потоке
+                Action act = () =>
+                {
+                    LoadFilesFromDirectory(leftDataView.Tag as DirectoryInfo, leftDataView);
+                };
+                Invoke(act);
+            };
+            rightFileWatcher = new FileSystemWatcher();
+            rightFileWatcher.Renamed += (object sender, RenamedEventArgs e) =>
+            {
+                //Делаю через Action, так как FileSystemWatcher исполняется в другом потоке
+                Action act = () =>
+                {
+                    LoadFilesFromDirectory(rightDataView.Tag as DirectoryInfo, rightDataView);
+                };
+                Invoke(act);
+            };
             side = WindowSide.Left;
             InitializeComponent();
+            leftDataView.AutoSizeRowsMode = rightDataView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             lowerButtons = new Button[5] { copyBtn, transferBtn, pasteBtn, deleteBtn, createDirBtn };
             leftDataView.Click += new EventHandler((sender, e) => { side = WindowSide.Left; });
             rightDataView.Click += new EventHandler((sender, e) => { side = WindowSide.Right; });
@@ -41,14 +64,148 @@ namespace TotalCommanderWinForms
             }
             leftDiskDropDown.SelectedIndex = rightDiskDropDown.SelectedIndex = 0;
             OnLowerPanelSizeChanged(null, null);
+            leftFileWatcher.EnableRaisingEvents = rightFileWatcher.EnableRaisingEvents = true;
         }
 
+        #region Win32
+        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+        static extern bool ShellExecuteEx(ref SHELLEXECUTEINFO lpExecInfo);
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        public struct SHELLEXECUTEINFO
+        {
+            public int cbSize;
+            public uint fMask;
+            public IntPtr hwnd;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpVerb;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpFile;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpParameters;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpDirectory;
+            public int nShow;
+            public IntPtr hInstApp;
+            public IntPtr lpIDList;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpClass;
+            public IntPtr hkeyClass;
+            public uint dwHotKey;
+            public IntPtr hIcon;
+            public IntPtr hProcess;
+        }
+
+        private const int SW_SHOW = 5;
+        private const uint SEE_MASK_INVOKEIDLIST = 12;
+        public static bool ShowFileProperties(string Filename)
+        {
+            SHELLEXECUTEINFO info = new SHELLEXECUTEINFO();
+            info.cbSize = Marshal.SizeOf(info);
+            info.lpVerb = "properties";
+            info.lpFile = Filename;
+            info.nShow = SW_SHOW;
+            info.fMask = SEE_MASK_INVOKEIDLIST;
+            return ShellExecuteEx(ref info);
+        }
+        #endregion
+
+        #region ForContextMenu
+        public ContextMenuStrip CreateFileRowStrip(DataGridViewRow row, FileInfo info)
+        {
+            ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
+            contextMenuStrip.ShowImageMargin = contextMenuStrip.ShowCheckMargin = false;
+            #region Property buttton
+            ToolStripButton propButton = new ToolStripButton("Свойства");
+            propButton.Click += (object sender, EventArgs e) =>
+            {
+                ShowFileProperties(info.FullName);
+            };
+            #endregion
+
+            #region Open buttton
+            ToolStripButton openButton = new ToolStripButton("Открыть");
+            openButton.Click += (object sender, EventArgs e) =>
+            {
+                try
+                {
+                    Process.Start(info.FullName);
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show($"Ошибка запуска файла: \n{exception}", "Ошибка запуска");
+                }
+            };
+            #endregion
+
+            #region Rename buttton
+            ToolStripButton renameButton = new ToolStripButton("Переименовать");
+            renameButton.Size = new Size(78, renameButton.Height);
+            renameButton.Click += (object sender, EventArgs e) =>
+            {
+                row.DataGridView.CurrentCell = row.Cells[1];
+                row.DataGridView.BeginEdit(true);
+            };
+            #endregion
+            contextMenuStrip.Items.Add(propButton);
+            contextMenuStrip.Items.Add(openButton);
+            contextMenuStrip.Items.Add(renameButton);
+            return contextMenuStrip;
+        }
+
+        public ContextMenuStrip CreateDirectoryRowStrip(DataGridViewRow row, DirectoryInfo info)
+        {
+            ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
+            contextMenuStrip.ShowImageMargin = contextMenuStrip.ShowCheckMargin = false;
+            #region Property buttton
+            ToolStripButton propButton = new ToolStripButton("Свойства");
+            propButton.Click += (object sender, EventArgs e) =>
+            {
+                ShowFileProperties(info.FullName);
+            };
+            #endregion
+
+            #region Open buttton
+            ToolStripButton openButton = new ToolStripButton("Открыть");
+            openButton.Click += (object sender, EventArgs e) =>
+            {
+                LoadFilesFromDirectory(info, row.DataGridView);
+                if (info.Parent != null && info.Parent.FullName.Equals(info.FullName))
+                {
+                    foreach (DataGridViewRow rowFromGrid in row.DataGridView.Rows)
+                    {
+                        DirectoryInfo rowDirectoryInfo = rowFromGrid.Tag as DirectoryInfo;
+                        rowFromGrid.Selected = rowDirectoryInfo != null && rowDirectoryInfo.FullName.Equals(info.FullName);
+                    }
+                }
+            };
+            #endregion
+
+            #region Rename buttton
+            ToolStripButton renameButton = new ToolStripButton("Переименовать");
+            renameButton.Size = new Size(78, renameButton.Height);
+            renameButton.Click += (object sender, EventArgs e) =>
+            {
+                row.DataGridView.CurrentCell = row.Cells[1];
+                row.DataGridView.BeginEdit(true);
+            };
+            #endregion
+            contextMenuStrip.Items.Add(propButton);
+            contextMenuStrip.Items.Add(openButton);
+            contextMenuStrip.Items.Add(renameButton);
+            return contextMenuStrip;
+        }
+        #endregion
+
+        #region LoadingFiles
         private void LoadFilesFromDisk(DriveInfo currentDrive, DataGridView gridView)
         {
+
             foreach (string directoryPath in Directory.GetDirectories(currentDrive.Name))
             {
                 DirectoryInfo info = new DirectoryInfo(directoryPath);
                 DataGridViewRow row = new DataGridViewRow();
+                row.ContextMenuStrip = CreateDirectoryRowStrip(row, info);
                 row.CreateCells(gridView);
                 row.Tag = info;
                 row.SetValues(new object[6] { DefaultIcons.Folder, info.Name, "<DIR>", (long)0, info.LastWriteTime.ToString(dateFormat), info.Attributes });
@@ -59,6 +216,7 @@ namespace TotalCommanderWinForms
             {
                 FileInfo info = new FileInfo(filePath);
                 DataGridViewRow row = new DataGridViewRow();
+                row.ContextMenuStrip = CreateFileRowStrip(row, info);
                 row.CreateCells(gridView);
                 row.Tag = info;
                 row.SetValues(new object[6] { Icon.ExtractAssociatedIcon(info.FullName), Path.GetFileNameWithoutExtension(info.Name), info.Extension, info.Length, info.LastWriteTime.ToString(dateFormat), info.Attributes });
@@ -77,10 +235,11 @@ namespace TotalCommanderWinForms
 
         private void LoadFilesFromDirectory(DirectoryInfo currentDirectory, DataGridView gridView)
         {
+            
             if (!currentDirectory.FullName.EndsWith(":\\"))
             {
                 //^
-                //| Проевка является ли директория диском, так как для диска выписывается ограничение доступа
+                //| Проверка является ли директория диском, так как для диска выписывается ограничение доступа
                 try
                 {
                     //Добавить Try-Catch блок, так как для некоторых папок невозможно определить права доступа (Такие папки, как Config.MSI) и выдаёт исключение
@@ -112,6 +271,7 @@ namespace TotalCommanderWinForms
             {
                 DirectoryInfo info = new DirectoryInfo(directoryPath);
                 DataGridViewRow row = new DataGridViewRow();
+                row.ContextMenuStrip = CreateDirectoryRowStrip(row, info);
                 row.CreateCells(gridView);
                 row.Tag = info;
                 row.SetValues(new object[6] { DefaultIcons.Folder, info.Name, "<DIR>", (long)0, info.LastWriteTime.ToString(dateFormat), info.Attributes });
@@ -122,6 +282,7 @@ namespace TotalCommanderWinForms
             {
                 FileInfo info = new FileInfo(filePath);
                 DataGridViewRow row = new DataGridViewRow();
+                row.ContextMenuStrip = CreateFileRowStrip(row, info);
                 row.CreateCells(gridView);
                 row.Tag = info;
                 row.SetValues(new object[6] { Icon.ExtractAssociatedIcon(info.FullName), Path.GetFileNameWithoutExtension(info.Name), info.Extension, info.Length, info.LastWriteTime.ToString(dateFormat), info.Attributes });
@@ -137,154 +298,9 @@ namespace TotalCommanderWinForms
                 rightPathInfo.Text = $"Путь: {currentDirectory.FullName}";
             }
         }
+        #endregion
 
-        private void leftDiskDropDown_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ComboBox senderBox = sender as ComboBox;
-            if (senderBox == null)
-            {
-                return;
-            }
-            DriveInfo currentDrive = senderBox.SelectedItem as DriveInfo;
-            if (currentDrive == null)
-            {
-                return;
-            }
-            switch (senderBox.Name)
-            {
-                case "leftDiskDropDown":
-                    leftDataView.Rows.Clear();
-                    leftDiskSpaceInfo.Text = $"{currentDrive.AvailableFreeSpace} из {currentDrive.TotalSize} совбодно";
-                    LoadFilesFromDisk(currentDrive, leftDataView);
-                    break;
-                case "rightDiskDropDown":
-                    rightDataView.Rows.Clear();
-                    rightDiskSpaceInfo.Text = $"{currentDrive.AvailableFreeSpace} из {currentDrive.TotalSize} совбодно";
-                    LoadFilesFromDisk(currentDrive, rightDataView);
-                    break;
-            }
-        }
-
-        private void OnCellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex == -1)
-            {
-                return;
-            }
-            DataGridView dataView = sender as DataGridView;
-            if (dataView == null)
-            {
-                return;
-            }
-            DataGridViewRow selectedRow = dataView.Rows[e.RowIndex];
-            object rowTag = selectedRow.Tag;
-            if (rowTag is DirectoryInfo)
-            {
-                DirectoryInfo selectedRowInfo = rowTag as DirectoryInfo;
-                LoadFilesFromDirectory(selectedRowInfo, dataView);
-                DirectoryInfo viewInfo = dataView.Tag as DirectoryInfo;
-                //|     Проверка, чтобы лишний раз код нк исполнялся
-                //V
-                if (viewInfo != null && viewInfo.Parent != null && viewInfo.Parent.FullName.Equals(selectedRowInfo.FullName))
-                {
-                    foreach (DataGridViewRow row in dataView.Rows)
-                    {
-                        DirectoryInfo rowDirectoryInfo = row.Tag as DirectoryInfo;
-                        row.Selected = rowDirectoryInfo != null && rowDirectoryInfo.FullName.Equals(viewInfo.FullName);
-                    }
-                }
-            }
-            else
-            {
-                try
-                {
-                    Process.Start((rowTag as FileInfo).FullName);
-                }
-                catch (Exception exception)
-                {
-                    MessageBox.Show($"Ошибка запуска файла: \n{exception}", "Ошибка запуска");
-                }
-            }
-        }
-
-        private void OnCellEndEdit(object sender, DataGridViewCellEventArgs e)
-        {
-            DataGridView dataView = sender as DataGridView;
-            if (dataView == null)
-            {
-                return;
-            }
-            DataGridViewRow selectedRow = dataView.Rows[e.RowIndex];
-            object rowTag = selectedRow.Tag;
-            if (rowTag == null)
-            {
-                return;
-            }
-            string editedText = dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
-            if (editedText.Any(x => prohibitedSymbols.Contains(x)))
-            {
-                MessageBox.Show($"Символы {prohibitedSymbols} нельзя использоватеть в названиях директорий и файлов!", "Ошибка");
-                if (rowTag is DirectoryInfo)
-                {
-                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = (rowTag as DirectoryInfo).Name;
-                }
-                else
-                {
-                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = (rowTag as FileInfo).Name;
-                }
-                return;
-            }
-            if (rowTag is DirectoryInfo)
-            {
-                DirectoryInfo info = rowTag as DirectoryInfo;
-                if (info.Name.Equals(editedText))
-                {
-                    return;
-                }
-                if (File.Exists($"{info.Parent.FullName}\\{editedText}"))
-                {
-                    MessageBox.Show("Такая папка уже существует", "Ошибка");
-                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = info.Name;
-                    return;
-                }
-                try
-                {
-                    Directory.Move(info.FullName, $"{info.Parent.FullName}\\{editedText}");
-                    dataView.Rows[e.RowIndex].Tag = new DirectoryInfo($"{info.Parent.FullName}\\{editedText}");
-                }
-                catch
-                {
-                    MessageBox.Show("Ошибка переименования директории", "Ошибка");
-                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = info.Name;
-                }
-            }
-            else
-            {
-                FileInfo info = rowTag as FileInfo;
-                string fileNameNoExt = Path.GetFileNameWithoutExtension(info.Name);
-                if (fileNameNoExt.Equals(editedText))
-                {
-                    return;
-                }
-                if (File.Exists($"{info.Directory.FullName}\\{editedText}{info.Extension}"))
-                {
-                    MessageBox.Show("Такой файл уже существует", "Ошибка");
-                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = fileNameNoExt;
-                    return;
-                }
-                try
-                {
-                    File.Move(info.FullName, $"{info.Directory.FullName}\\{editedText}{info.Extension}");
-                    dataView.Rows[e.RowIndex].Tag = new FileInfo($"{info.Directory.FullName}\\{editedText}{info.Extension}");
-                }
-                catch
-                {
-                    MessageBox.Show("Ошибка переименования директории", "Ошибка");
-                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = fileNameNoExt;
-                }
-            }
-        }
-
+        #region Clipboard
         public void CopyToClipboard()
         {
             DataGridViewRowCollection rowCollection = null;
@@ -362,33 +378,9 @@ namespace TotalCommanderWinForms
                 }
             }
         }
+        #endregion
 
-        public static void CopyDirectory(DirectoryInfo source, DirectoryInfo target)
-        {
-            if (target.FullName.EndsWith("\\"))
-            {
-                Directory.CreateDirectory($"{target.FullName}{source.Name}");
-            }
-            else
-            {
-                Directory.CreateDirectory($"{target.FullName}\\{source.Name}");
-            }
-
-            // Copy each file into the new directory.
-            foreach (FileInfo fi in source.GetFiles())
-            {
-                fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
-            }
-
-            // Copy each subdirectory using recursion.
-            foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
-            {
-                DirectoryInfo nextTargetSubDir =
-                    target.CreateSubdirectory(diSourceSubDir.Name);
-                CopyDirectory(diSourceSubDir, nextTargetSubDir);
-            }
-        }
-
+        #region Lower Buttons
         private void OnTransferClick(object sender, EventArgs e)
         {
             DataGridView dataVeiwSender = null;
@@ -453,16 +445,25 @@ namespace TotalCommanderWinForms
                             }
                             if (!receiverDirectory.GetDirectories().Select(x => x.FullName).Any(x => x.Equals(dirInfo.FullName)))
                             {
+                                DirectoryInfo info;
                                 try
                                 {
-                                    dirInfo.MoveTo(receiverDirectory.FullName);
+                                    if (dirInfo.FullName.EndsWith("\\"))
+                                    {
+                                        dirInfo.MoveTo($"{receiverDirectory.FullName}{dirInfo.Name}");
+                                        info = new DirectoryInfo($"{receiverDirectory}{dirInfo.Name}");
+                                    }
+                                    else
+                                    {
+                                        dirInfo.MoveTo($"{receiverDirectory.FullName}\\{dirInfo.Name}");
+                                        info = new DirectoryInfo($"{receiverDirectory}\\{dirInfo.Name}");
+                                    }
                                 }
-                                catch
+                                catch (Exception ex)
                                 {
-                                    MessageBox.Show($"Ошибка копирования файла {fileInfo.FullName}", "Ошибка");
+                                    MessageBox.Show($"Ошибка копирования папки {dirInfo.FullName} {ex}", "Ошибка");
                                     continue;
                                 }
-                                DirectoryInfo info = new DirectoryInfo($"{receiverDirectory}\\{dirInfo.Name}");
                                 DataGridViewRow newRow = new DataGridViewRow();
                                 newRow.CreateCells(dataVeiwReceiver);
                                 newRow.Tag = info;
@@ -611,12 +612,12 @@ namespace TotalCommanderWinForms
                         {
                             try
                             {
-                                dirInfo.Delete();
+                                dirInfo.Delete(true);
                                 rowsToDelete.Add(row);
                             }
                             catch
                             {
-                                MessageBox.Show($"Не удалось удалить папку {dirInfo.FullName}", "Ошибка");
+                                MessageBox.Show($"Не удалось удалить папку {dirInfo.FullName} ", "Ошибка");
                             }
                         }
                     }
@@ -706,6 +707,237 @@ namespace TotalCommanderWinForms
             {
                 lowerButtons[i].Location = new Point(i * applyingBtnWidth, lowerButtons[i].Location.Y);
                 lowerButtons[i].Size = new Size(applyingBtnWidth, lowerButtons[i].Size.Height);
+            }
+        }
+        #endregion
+
+        #region Drag And Drop
+        private void OnDragDrop(object sender, DragEventArgs e)
+        {
+            //https://stackoverflow.com/questions/68598/how-do-i-drag-and-drop-files-into-an-application
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            DataGridView dataView = sender as DataGridView;
+            if (dataView == null)
+            {
+                return;
+            }
+            DirectoryInfo currentDirectory = dataView.Tag as DirectoryInfo;
+            if (files != null)
+            {
+                foreach (string path in files)
+                {
+                    if (File.GetAttributes(path).HasFlag(FileAttributes.Directory))
+                    {
+                        try
+                        {
+                            CopyDirectory(new DirectoryInfo(path), currentDirectory);
+                        }
+                        catch
+                        {
+                            MessageBox.Show($"Путь {path} невозможно скопировать или он был скопирован неполностью");
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        FileInfo info = new FileInfo(path);
+                        try
+                        {
+                            info.CopyTo($"{currentDirectory.FullName}\\{info.Name}");
+                        }
+                        catch
+                        {
+                            MessageBox.Show($"Путь {path} невозможно скопировать или он был скопирован неполностью");
+                            continue;
+                        }
+                    }
+                }
+                if (files.Length > 0)
+                {
+                    LoadFilesFromDirectory(currentDirectory, dataView);
+                }
+            }
+        }
+
+        private void OnDragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Copy;
+        }
+        #endregion
+
+        private void leftDiskDropDown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBox senderBox = sender as ComboBox;
+            if (senderBox == null)
+            {
+                return;
+            }
+            DriveInfo currentDrive = senderBox.SelectedItem as DriveInfo;
+            if (currentDrive == null)
+            {
+                return;
+            }
+            switch (senderBox.Name)
+            {
+                case "leftDiskDropDown":
+                    leftDataView.Rows.Clear();
+                    leftDiskSpaceInfo.Text = $"{currentDrive.AvailableFreeSpace} из {currentDrive.TotalSize} совбодно";
+                    LoadFilesFromDisk(currentDrive, leftDataView);
+                    leftFileWatcher.Path = currentDrive.Name;
+                    break;
+                case "rightDiskDropDown":
+                    rightDataView.Rows.Clear();
+                    rightDiskSpaceInfo.Text = $"{currentDrive.AvailableFreeSpace} из {currentDrive.TotalSize} совбодно";
+                    LoadFilesFromDisk(currentDrive, rightDataView);
+                    rightFileWatcher.Path = currentDrive.Name;
+                    break;
+            }
+        }
+
+        private void OnCellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex == -1)
+            {
+                return;
+            }
+            DataGridView dataView = sender as DataGridView;
+            if (dataView == null)
+            {
+                return;
+            }
+            DataGridViewRow selectedRow = dataView.Rows[e.RowIndex];
+            object rowTag = selectedRow.Tag;
+            if (rowTag is DirectoryInfo)
+            {
+                DirectoryInfo selectedRowInfo = rowTag as DirectoryInfo;
+                LoadFilesFromDirectory(selectedRowInfo, dataView);
+                //|     Проверка, чтобы лишний раз код не исполнялся
+                //V
+                if (selectedRowInfo != null && selectedRowInfo.Parent != null && selectedRowInfo.Parent.FullName.Equals(selectedRowInfo.FullName))
+                {
+                    foreach (DataGridViewRow row in dataView.Rows)
+                    {
+                        DirectoryInfo rowDirectoryInfo = row.Tag as DirectoryInfo;
+                        row.Selected = rowDirectoryInfo != null && rowDirectoryInfo.FullName.Equals(selectedRowInfo.FullName);
+                    }
+                }
+            }
+            else
+            {
+                try
+                {
+                    Process.Start((rowTag as FileInfo).FullName);
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show($"Ошибка запуска файла: \n{exception}", "Ошибка запуска");
+                }
+            }
+        }
+
+        private void OnCellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            DataGridView dataView = sender as DataGridView;
+            if (dataView == null)
+            {
+                return;
+            }
+            DataGridViewRow selectedRow = dataView.Rows[e.RowIndex];
+            object rowTag = selectedRow.Tag;
+            if (rowTag == null)
+            {
+                return;
+            }
+            string editedText = dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+            if (editedText.Any(x => prohibitedSymbols.Contains(x)))
+            {
+                MessageBox.Show($"Символы {prohibitedSymbols} нельзя использоватеть в названиях директорий и файлов!", "Ошибка");
+                if (rowTag is DirectoryInfo)
+                {
+                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = (rowTag as DirectoryInfo).Name;
+                }
+                else
+                {
+                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = (rowTag as FileInfo).Name;
+                }
+                return;
+            }
+            if (rowTag is DirectoryInfo)
+            {
+                DirectoryInfo info = rowTag as DirectoryInfo;
+                if (info.Name.Equals(editedText))
+                {
+                    return;
+                }
+                if (File.Exists($"{info.Parent.FullName}\\{editedText}"))
+                {
+                    MessageBox.Show("Такая папка уже существует", "Ошибка");
+                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = info.Name;
+                    return;
+                }
+                try
+                {
+                    Directory.Move(info.FullName, $"{info.Parent.FullName}\\{editedText}");
+                    dataView.Rows[e.RowIndex].Tag = new DirectoryInfo($"{info.Parent.FullName}\\{editedText}");
+                }
+                catch
+                {
+                    MessageBox.Show("Ошибка переименования директории", "Ошибка");
+                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = info.Name;
+                }
+            }
+            else
+            {
+                FileInfo info = rowTag as FileInfo;
+                string fileNameNoExt = Path.GetFileNameWithoutExtension(info.Name);
+                if (fileNameNoExt.Equals(editedText))
+                {
+                    return;
+                }
+                if (File.Exists($"{info.Directory.FullName}\\{editedText}{info.Extension}"))
+                {
+                    MessageBox.Show("Такой файл уже существует", "Ошибка");
+                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = fileNameNoExt;
+                    return;
+                }
+                try
+                {
+                    File.Move(info.FullName, $"{info.Directory.FullName}\\{editedText}{info.Extension}");
+                    dataView.Rows[e.RowIndex].Tag = new FileInfo($"{info.Directory.FullName}\\{editedText}{info.Extension}");
+                }
+                catch
+                {
+                    MessageBox.Show("Ошибка переименования директории", "Ошибка");
+                    dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = fileNameNoExt;
+                }
+            }
+        }
+
+        public static void CopyDirectory(DirectoryInfo source, DirectoryInfo target)
+        {
+            string newDirectory;
+            if (target.FullName.EndsWith("\\"))
+            {
+                newDirectory = $"{target.FullName}{source.Name}";
+            }
+            else
+            {
+                newDirectory = $"{target.FullName}\\{source.Name}";
+            }
+            Directory.CreateDirectory(newDirectory);
+
+            // Copy each file into the new directory.
+            foreach (FileInfo fi in source.GetFiles())
+            {
+                fi.CopyTo(Path.Combine(newDirectory, fi.Name), true);
+            }
+
+            // Copy each subdirectory using recursion.
+            foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
+            {
+                DirectoryInfo nextTargetSubDir =
+                    target.CreateSubdirectory(diSourceSubDir.Name);
+                CopyDirectory(diSourceSubDir, nextTargetSubDir);
             }
         }
 

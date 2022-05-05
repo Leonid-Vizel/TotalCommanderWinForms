@@ -44,6 +44,5 @@ namespace TotalCommanderWinForms
         private const uint SHSIID_FOLDER = 0x3;
         private const uint SHGSI_ICON = 0x100;
         private const uint SHGSI_LARGEICON = 0x0;
-        private const uint SHGSI_SMALLICON = 0x1;
     }
 }

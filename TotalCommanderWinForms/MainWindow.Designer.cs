@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.MainSplitContainer = new System.Windows.Forms.SplitContainer();
             this.leftDataView = new System.Windows.Forms.DataGridView();
             this.leftImgColumn = new System.Windows.Forms.DataGridViewImageColumn();
@@ -101,6 +101,7 @@
             // 
             // leftDataView
             // 
+            this.leftDataView.AllowDrop = true;
             this.leftDataView.AllowUserToAddRows = false;
             this.leftDataView.AllowUserToDeleteRows = false;
             this.leftDataView.AllowUserToResizeRows = false;
@@ -125,13 +126,15 @@
             this.leftDataView.TabIndex = 3;
             this.leftDataView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellDoubleClick);
             this.leftDataView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellEndEdit);
+            this.leftDataView.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnDragDrop);
+            this.leftDataView.DragEnter += new System.Windows.Forms.DragEventHandler(this.OnDragEnter);
             // 
             // leftImgColumn
             // 
             this.leftImgColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle7.NullValue")));
-            this.leftImgColumn.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle1.NullValue")));
+            this.leftImgColumn.DefaultCellStyle = dataGridViewCellStyle1;
             this.leftImgColumn.FillWeight = 60.9137F;
             this.leftImgColumn.HeaderText = "Img";
             this.leftImgColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
@@ -219,6 +222,7 @@
             // 
             // rightDataView
             // 
+            this.rightDataView.AllowDrop = true;
             this.rightDataView.AllowUserToAddRows = false;
             this.rightDataView.AllowUserToDeleteRows = false;
             this.rightDataView.AllowUserToResizeRows = false;
@@ -243,13 +247,15 @@
             this.rightDataView.TabIndex = 6;
             this.rightDataView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellDoubleClick);
             this.rightDataView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellEndEdit);
+            this.rightDataView.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnDragDrop);
+            this.rightDataView.DragEnter += new System.Windows.Forms.DragEventHandler(this.OnDragEnter);
             // 
             // rightImgColumn
             // 
             this.rightImgColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle8.NullValue")));
-            this.rightImgColumn.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle2.NullValue")));
+            this.rightImgColumn.DefaultCellStyle = dataGridViewCellStyle2;
             this.rightImgColumn.FillWeight = 60.9137F;
             this.rightImgColumn.HeaderText = "Img";
             this.rightImgColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
