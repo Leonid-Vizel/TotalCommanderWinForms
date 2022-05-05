@@ -19,6 +19,7 @@ namespace TotalCommanderWinForms
         private Button[] lowerButtons;
         private FileSystemWatcher leftFileWatcher;
         private FileSystemWatcher rightFileWatcher;
+        private bool readDefaultExecuted = false;
         static MainWindow()
         {
             prohibitedSymbols = "\\|/*:?\"<>";
@@ -27,6 +28,7 @@ namespace TotalCommanderWinForms
 
         public MainWindow()
         {
+            #region Настройка FileSystemWatcher
             leftFileWatcher = new FileSystemWatcher();
             leftFileWatcher.Renamed += (object sender, RenamedEventArgs e) =>
             {
@@ -47,6 +49,7 @@ namespace TotalCommanderWinForms
                 };
                 Invoke(act);
             };
+            #endregion
             side = WindowSide.Left;
             InitializeComponent();
             leftDataView.AutoSizeRowsMode = rightDataView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
@@ -64,7 +67,28 @@ namespace TotalCommanderWinForms
             }
             leftDiskDropDown.SelectedIndex = rightDiskDropDown.SelectedIndex = 0;
             OnLowerPanelSizeChanged(null, null);
-            leftFileWatcher.EnableRaisingEvents = rightFileWatcher.EnableRaisingEvents = true;
+            #region Чтение прошлой открытой папки
+            if (File.Exists("DefaultDirectories.txt"))
+            {
+                string[] paths = File.ReadAllLines("DefaultDirectories.txt");
+                if (paths.Length >= 2)
+                {
+                    if (Directory.Exists(paths[0]))
+                    {
+                        DirectoryInfo leftInfo = new DirectoryInfo(paths[0]);
+                        LoadFilesFromDirectory(leftInfo, leftDataView);
+                    }
+
+                    if (Directory.Exists(paths[1]))
+                    {
+                        DirectoryInfo rightInfo = new DirectoryInfo(paths[1]);
+                        LoadFilesFromDirectory(rightInfo, rightDataView);
+                    }
+                }
+            }
+            readDefaultExecuted = true;
+            #endregion
+            leftFileWatcher.EnableRaisingEvents = rightFileWatcher.EnableRaisingEvents = true; //<-- Включение получения ивентов от FileSystemWatcher
         }
 
         #region Win32
@@ -200,7 +224,6 @@ namespace TotalCommanderWinForms
         #region LoadingFiles
         private void LoadFilesFromDisk(DriveInfo currentDrive, DataGridView gridView)
         {
-
             foreach (string directoryPath in Directory.GetDirectories(currentDrive.Name))
             {
                 DirectoryInfo info = new DirectoryInfo(directoryPath);
@@ -231,6 +254,7 @@ namespace TotalCommanderWinForms
             {
                 rightPathInfo.Text = $"Путь: {currentDrive.Name}";
             }
+            OverWriteDefaultPaths();
         }
 
         private void LoadFilesFromDirectory(DirectoryInfo currentDirectory, DataGridView gridView)
@@ -297,6 +321,7 @@ namespace TotalCommanderWinForms
             {
                 rightPathInfo.Text = $"Путь: {currentDirectory.FullName}";
             }
+            OverWriteDefaultPaths();
         }
         #endregion
 
@@ -764,6 +789,19 @@ namespace TotalCommanderWinForms
             e.Effect = DragDropEffects.Copy;
         }
         #endregion
+
+        private void OverWriteDefaultPaths()
+        {
+            if (readDefaultExecuted)
+            {
+                DirectoryInfo leftDirInfo = leftDataView.Tag as DirectoryInfo;
+                DirectoryInfo rightDirInfo = rightDataView.Tag as DirectoryInfo;
+                if (leftDirInfo != null && rightDirInfo != null)
+                {
+                    File.WriteAllLines("DefaultDirectories.txt", new string[2] { leftDirInfo.FullName, rightDirInfo.FullName });
+                }
+            }
+        }
 
         private void leftDiskDropDown_SelectedIndexChanged(object sender, EventArgs e)
         {
